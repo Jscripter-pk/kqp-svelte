@@ -1,13 +1,14 @@
 <script lang="ts">
+  import { t } from '$lib/i18n';
   export let node: string | null = null;
   export let pages: { pageName: string }[] = [];
 </script>
 
 <div class="breadcrumb">
-  <a href="/dashboard">Dashboard</a>
+  <a href="/dashboard">{$t.breadcrumb.dashboard}</a>
   {#if node}
     <span>›</span>
-    <a href="/dashboard/nodes">Nodes</a>
+    <a href="/dashboard/nodes">{$t.breadcrumb.nodes}</a>
     <span>›</span>
     <a href="/dashboard/nodes/{node}/node-dashboard">{node}</a>
   {/if}

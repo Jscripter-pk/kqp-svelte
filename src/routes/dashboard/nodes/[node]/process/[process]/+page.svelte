@@ -2,6 +2,7 @@
     import { page } from "$app/stores";
     import { fetcher, endpoints } from "$lib/api";
     import Breadcrumb from "$lib/components/common/Breadcrumb.svelte";
+    import { t } from "$lib/i18n";
 
     $: nodeId = $page.params.node;
     $: processName = decodeURIComponent($page.params.process);
@@ -52,33 +53,33 @@
 <Breadcrumb
     node={nodeId}
     pages={[
-        { pageName: "Process", link: `/dashboard/nodes/${nodeId}/process` },
+        { pageName: $t.process.title, link: `/dashboard/nodes/${nodeId}/process` },
         { pageName: processName },
     ]}
 />
 
-<h1 class="page-title">Process : {processName}</h1>
+<h1 class="page-title">{$t.process.detailTitle}{processName}</h1>
 
 <!-- Process Info Table -->
 <div class="card proc-table-card">
     {#if loading}
         <div class="center-pad"><span class="loading-spinner"></span></div>
     {:else if error}
-        <div class="center-pad error-text">Error Fetching Process</div>
+        <div class="center-pad error-text">{$t.process.errorFetching}</div>
     {:else if !processItem}
-        <div class="center-pad muted-text">No Process Found</div>
+        <div class="center-pad muted-text">{$t.process.notFound}</div>
     {:else}
         <table>
             <thead>
                 <tr>
                     <th></th>
-                    <th>Process Name</th>
+                    <th>{$t.process.processName}</th>
                     <th></th>
-                    <th>timestamp</th>
-                    <th style="text-align:right">CPU</th>
-                    <th style="text-align:right">MEM</th>
+                    <th>{$t.common.timestamp}</th>
+                    <th style="text-align:right">{$t.process.cpu}</th>
+                    <th style="text-align:right">{$t.process.mem}</th>
                     <th></th>
-                    <th style="text-align:right">Description</th>
+                    <th style="text-align:right">{$t.common.description}</th>
                 </tr>
             </thead>
             <tbody>
@@ -101,7 +102,7 @@
 
 <!-- Process Definition / Layout Script -->
 <div class="script-panel">
-    <div class="script-header">Process Definition</div>
+    <div class="script-header">{$t.process.definition}</div>
     <div class="script-body">
         {#if loading}
             <div class="center-pad"><span class="loading-spinner"></span></div>
@@ -109,7 +110,7 @@
             <pre class="script-code">{@html highlightSyntax(layoutDef)}</pre>
         {:else}
             <pre
-                class="script-code muted-text">No layout definition available</pre>
+                class="script-code muted-text">{$t.process.noDefinition}</pre>
         {/if}
     </div>
 </div>

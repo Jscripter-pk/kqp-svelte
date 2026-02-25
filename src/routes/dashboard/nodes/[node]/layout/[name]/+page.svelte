@@ -4,164 +4,176 @@
   import Breadcrumb from "$lib/components/common/Breadcrumb.svelte";
 
   $: nodeId = $page.params.node;
-  $: name = $page.params.name;
+  $: layoutName = decodeURIComponent($page.params.name);
 
-  let item: any = null;
   let loading = true;
+  let error = "";
+  let detail: any = {};
+  let layoutDef = "";
 
   async function loadData() {
     loading = true;
+    error = "";
     try {
       const res = (await fetcher(
-        endpoints.layouts.detail(nodeId, name),
+        endpoints.layouts.detail(nodeId, layoutName),
       )) as any;
-      item = res?.data?.detail ?? null;
+      detail = res?.data?.detail ?? {};
+      layoutDef = res?.data?.layout_definition ?? "";
     } catch (e) {
+      error = String(e);
       console.error(e);
     }
     loading = false;
   }
 
-  $: name, loadData();
+  $: if (nodeId && layoutName) loadData();
+
+  function highlightSyntax(text: string): string {
+    if (!text) return "";
+    return text
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/(#.*)/g, '<span class="hl-comment">$1</span>')
+      .replace(/^(\[.*\])/gm, '<span class="hl-section">$1</span>')
+      .replace(
+        /^(\s*\w[\w_]*)(\s*=\s*)(.*)/gm,
+        '<span class="hl-key">$1</span><span class="hl-eq">$2</span><span class="hl-val">$3</span>',
+      );
+  }
 </script>
 
 <Breadcrumb
   node={nodeId}
   pages={[
-    { pageName: "Layout List", href: `/dashboard/nodes/${nodeId}/layout` },
-    { pageName: name },
+    { pageName: "Layout List", link: `/dashboard/nodes/${nodeId}/layout` },
+    { pageName: layoutName },
   ]}
 />
-<h1 class="page-title">Layout: {name}</h1>
 
-{#if loading}
-  <div class="card" style="display:flex;justify-content:center;padding:60px">
-    <span class="loading-spinner"></span>
-  </div>
-{:else if !item}
-  <div
-    class="card"
-    style="padding:40px;text-align:center;color:var(--text-muted)"
-  >
-    Layout not found
-  </div>
-{:else}
-  <div class="detail-grid">
-    <div class="card detail-card">
-      <h3 class="section-title">Basic Info</h3>
-      <div class="field-list">
-        <div class="field-row">
-          <span class="field-label">Name</span><span class="field-value"
-            >{item.name ?? name}</span
-          >
-        </div>
-        <div class="field-row">
-          <span class="field-label">Path</span><span class="field-value"
-            >{item.path ?? "—"}</span
-          >
-        </div>
-        <div class="field-row">
-          <span class="field-label">Timestamp</span><span class="field-value"
-            >{item.timestamp ?? "—"}</span
-          >
-        </div>
-        <div class="field-row">
-          <span class="field-label">Ref. Process</span><span class="field-value"
-            >{item.process !== undefined
-              ? Number(item.process).toLocaleString()
-              : "—"}</span
-          >
-        </div>
-        <div class="field-row">
-          <span class="field-label">Description</span><span class="field-value"
-            >{item.desc ?? "—"}</span
-          >
-        </div>
-      </div>
-    </div>
+<h1 class="page-title">Layout : {layoutName}</h1>
 
-    {#if item.fields && item.fields.length}
-      <div class="card detail-card">
-        <h3 class="section-title">Fields</h3>
-        <table>
-          <thead
-            ><tr><th>Name</th><th>Type</th><th>Size</th><th>Description</th></tr
-            ></thead
-          >
-          <tbody>
-            {#each item.fields as f}
-              <tr
-                ><td>{f.name}</td><td>{f.type}</td><td>{f.size ?? "—"}</td><td
-                  >{f.desc ?? "—"}</td
-                ></tr
-              >
-            {/each}
-          </tbody>
-        </table>
-      </div>
-    {/if}
+<!-- Top: Summary Table -->
+<div class="card summary-card">
+  {#if loading}
+    <div class="center-pad"><span class="loading-spinner"></span></div>
+  {:else if error}
+    <div class="center-pad error-text">Error Fetching Layout</div>
+  {:else if !detail.name}
+    <div class="center-pad muted-text">No Process Found</div>
+  {:else}
+    <table>
+      <thead>
+        <tr>
+          <th></th>
+          <th>Layout Name</th>
+          <th>Path</th>
+          <th>Timestamp</th>
+          <th>Process</th>
+          <th>Channel.IN</th>
+          <th></th>
+          <th></th>
+          <th>Description</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td></td>
+          <td>{detail.name}</td>
+          <td>{detail.path ?? ""}</td>
+          <td>{detail.timestamp ?? ""}</td>
+          <td>{detail.process ?? ""}</td>
+          <td>{detail.channel_in ?? ""}</td>
+          <td></td>
+          <td></td>
+          <td>{detail.desc ?? ""}</td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+  {/if}
+</div>
 
-    {#if item.content !== undefined}
-      <div class="card detail-card">
-        <h3 class="section-title">Content</h3>
-        <pre class="code-block">{typeof item.content === "string"
-            ? item.content
-            : JSON.stringify(item.content, null, 2)}</pre>
-      </div>
-    {/if}
-
-    <div class="card detail-card">
-      <h3 class="section-title">Raw Data</h3>
-      <pre class="code-block">{JSON.stringify(item, null, 2)}</pre>
+<!-- Layout Definition (full width) -->
+{#if !loading && !error}
+  <div class="def-panel">
+    <div class="def-header">Layout Definition</div>
+    <div class="def-body">
+      {#if layoutDef}
+        <pre class="def-code">{@html highlightSyntax(layoutDef)}</pre>
+      {:else}
+        <pre class="def-code muted-text">No layout definition available.</pre>
+      {/if}
     </div>
   </div>
 {/if}
 
 <style>
-  .detail-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
-  .detail-card h3.section-title {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+  .summary-card {
+    padding: 0;
+    overflow: auto;
     margin-bottom: 16px;
   }
-  .field-list {
+  .center-pad {
     display: flex;
-    flex-direction: column;
-    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
   }
-  .field-row {
-    display: flex;
-    gap: 12px;
-    align-items: flex-start;
+  .error-text {
+    color: var(--error, #ff5630);
   }
-  .field-label {
-    min-width: 120px;
-    font-size: 13px;
-    color: var(--text-muted);
-    flex-shrink: 0;
+  .muted-text {
+    color: var(--text-muted, #667085);
   }
-  .field-value {
-    font-size: 13px;
-    color: var(--text-primary);
-    word-break: break-all;
+
+  /* Definition panel */
+  .def-panel {
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border-color, #2e3649);
   }
-  .code-block {
-    background: var(--bg-main);
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    padding: 12px;
-    font-size: 12px;
-    color: var(--text-secondary);
-    overflow-x: auto;
-    white-space: pre-wrap;
-    word-break: break-all;
+  .def-header {
+    background: #667085;
+    padding: 12px 16px;
+    font-weight: 600;
+    font-size: 15px;
+    color: #d1d6e0;
+    border-radius: 8px 8px 0 0;
+  }
+  .def-body {
+    background: #202838;
+    max-height: calc(100vh - 48px);
+    overflow-y: auto;
+  }
+  .def-code {
     margin: 0;
+    padding: 16px;
+    font-family: "Fira Code", "Consolas", "Monaco", monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    color: #afb7c8;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+
+  .def-code :global(.hl-comment) {
+    color: #6a737d;
+    font-style: italic;
+  }
+  .def-code :global(.hl-section) {
+    color: #79b8ff;
+    font-weight: 600;
+  }
+  .def-code :global(.hl-key) {
+    color: #b392f0;
+  }
+  .def-code :global(.hl-eq) {
+    color: #6a737d;
+  }
+  .def-code :global(.hl-val) {
+    color: #9ecbff;
   }
 </style>

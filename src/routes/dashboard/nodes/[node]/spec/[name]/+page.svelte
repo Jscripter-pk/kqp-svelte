@@ -3,6 +3,7 @@
   import { goto } from "$app/navigation";
   import { fetcher, endpoints } from "$lib/api";
   import Breadcrumb from "$lib/components/common/Breadcrumb.svelte";
+  import { t } from "$lib/i18n";
 
   $: nodeId = $page.params.node;
   $: specName = decodeURIComponent($page.params.name);
@@ -17,14 +18,10 @@
     loading = true;
     error = "";
     try {
-      const res = (await fetcher(
-        endpoints.spec.detail(nodeId, specName),
-      )) as any;
+      const res = (await fetcher(endpoints.spec.detail(nodeId, specName))) as any;
       detail = res?.data?.detail ?? {};
       identifiers = detail.related_identifies ?? [];
-      frags = Array.isArray(detail.spec_definition)
-        ? detail.spec_definition
-        : [];
+      frags = Array.isArray(detail.spec_definition) ? detail.spec_definition : [];
     } catch (e) {
       error = String(e);
       console.error(e);
@@ -44,33 +41,33 @@
 <Breadcrumb
   node={nodeId}
   pages={[
-    { pageName: "SPEC List", link: `/dashboard/nodes/${nodeId}/spec` },
+    { pageName: $t.spec.title, link: `/dashboard/nodes/${nodeId}/spec` },
     { pageName: detail.name ?? specName },
   ]}
 />
 
-<h1 class="page-title">SPEC: {detail.name ?? specName}</h1>
+<h1 class="page-title">{$t.spec.detailTitle}{detail.name ?? specName}</h1>
 
 <!-- Top: Spec Summary Table -->
 <div class="card summary-table-card">
   {#if loading}
     <div class="center-pad"><span class="loading-spinner"></span></div>
   {:else if error}
-    <div class="center-pad error-text">Error Fetching Spec</div>
+    <div class="center-pad error-text">{$t.spec.errorFetching}</div>
   {:else if !detail.name}
-    <div class="center-pad muted-text">No Spec Found</div>
+    <div class="center-pad muted-text">{$t.spec.notFound}</div>
   {:else}
     <table>
       <thead>
         <tr>
           <th></th>
-          <th>SPEC Name</th>
-          <th>Path</th>
-          <th>Timestamp</th>
-          <th>Ref. Identifier</th>
-          <th>Frags</th>
-          <th>Size</th>
-          <th>Description</th>
+          <th>{$t.spec.specName}</th>
+          <th>{$t.common.path}</th>
+          <th>{$t.common.timestamp}</th>
+          <th>{$t.spec.refIdentifier}</th>
+          <th>{$t.spec.frags}</th>
+          <th>{$t.common.size}</th>
+          <th>{$t.common.description}</th>
           <th></th>
         </tr>
       </thead>
@@ -100,23 +97,20 @@
         <table>
           <thead>
             <tr>
-              <th>No</th>
-              <th>Identifier</th>
-              <th>Ref. Frequency</th>
+              <th>{$t.common.id}</th>
+              <th>{$t.spec.identifier}</th>
+              <th>{$t.spec.refFrequency}</th>
             </tr>
           </thead>
           <tbody>
             {#if identifiers.length === 0}
-              <tr><td colspan="3" class="empty-cell">No data.</td></tr>
+              <tr><td colspan="3" class="empty-cell">{$t.common.noData}</td></tr>
             {:else}
               {#each identifiers as ident, i}
                 <tr>
                   <td>{i + 1}</td>
                   <td>
-                    <button
-                      class="ident-link"
-                      on:click={() => navigateToIdentify(ident.url)}
-                    >
+                    <button class="ident-link" on:click={() => navigateToIdentify(ident.url)}>
                       {ident.name}
                     </button>
                   </td>
@@ -132,21 +126,21 @@
     <!-- RIGHT: Specification Definition -->
     <div class="spec-def-panel">
       <div class="spec-def-wrapper">
-        <div class="spec-def-header">Specification Definition</div>
+        <div class="spec-def-header">{$t.spec.specDef}</div>
         <div class="spec-def-body">
           <table class="spec-def-table">
             <thead>
               <tr>
-                <th>No</th>
-                <th>Offset</th>
-                <th>Len</th>
-                <th>Type</th>
-                <th>Description</th>
+                <th>{$t.common.id}</th>
+                <th>{$t.spec.offset}</th>
+                <th>{$t.spec.len}</th>
+                <th>{$t.common.type}</th>
+                <th>{$t.common.description}</th>
               </tr>
             </thead>
             <tbody>
               {#if frags.length === 0}
-                <tr><td colspan="5" class="empty-cell">No data.</td></tr>
+                <tr><td colspan="5" class="empty-cell">{$t.common.noData}</td></tr>
               {:else}
                 {#each frags as frag, i}
                   <tr class={i % 2 === 0 ? "row-even" : "row-odd"}>

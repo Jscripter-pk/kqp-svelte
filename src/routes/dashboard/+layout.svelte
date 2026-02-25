@@ -3,6 +3,8 @@
   import { goto, afterNavigate } from '$app/navigation';
   import { auth } from '$lib/stores/auth';
   import { theme } from '$lib/stores/theme';
+  import { locale } from '$lib/stores/locale';
+  import { t } from '$lib/i18n';
   import { nodesStore } from '$lib/stores/nodes';
   import { onMount } from 'svelte';
 
@@ -31,23 +33,23 @@
   $: activeNodeMatch = currentPath.match(/\/dashboard\/nodes\/([^\/]+)/);
   $: activeNode = activeNodeMatch ? activeNodeMatch[1] : null;
 
-  const nodeSubPages = [
-    { key: 'node-dashboard', label: 'Node Dashboard' },
-    { key: 'process', label: 'Process' },
-    { key: 'memory', label: 'Memory' },
-    { key: 'audit-log', label: 'Audit Log' },
-    { key: 'channels-inbound', label: 'Channel Inbound' },
-    { key: 'channels-outbound', label: 'Channel Outbound' },
-    { key: 'rules', label: 'Rule List' },
-    { key: 'action', label: 'Action List' },
-    { key: 'layout', label: 'Layout List' },
-    { key: 'spec', label: 'SPEC List' },
-    { key: 'identify', label: 'Identifier List' },
-    { key: 'function', label: 'Function List' },
-    { key: 'daily-report-list', label: 'Daily Report List' },
-    { key: 'alerts-list', label: 'Alerts List' },
-    { key: 'status', label: 'Status' },
-    { key: 'replay', label: 'Replay' },
+  $: nodeSubPages = [
+    { key: 'node-dashboard', label: $t.nav.nodeDashboard },
+    { key: 'process', label: $t.nav.process },
+    { key: 'memory', label: $t.nav.memory },
+    { key: 'audit-log', label: $t.nav.auditLog },
+    { key: 'channels-inbound', label: $t.nav.channelInbound },
+    { key: 'channels-outbound', label: $t.nav.channelOutbound },
+    { key: 'rules', label: $t.nav.ruleList },
+    { key: 'action', label: $t.nav.actionList },
+    { key: 'layout', label: $t.nav.layoutList },
+    { key: 'spec', label: $t.nav.specList },
+    { key: 'identify', label: $t.nav.identifierList },
+    { key: 'function', label: $t.nav.functionList },
+    { key: 'daily-report-list', label: $t.nav.dailyReportList },
+    { key: 'alerts-list', label: $t.nav.alertsList },
+    { key: 'status', label: $t.nav.status },
+    { key: 'replay', label: $t.nav.replay },
   ];
 
   let expandedNodeId: string | null = null;
@@ -88,7 +90,7 @@
           <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
           <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
         </svg>
-        {#if sidebarOpen}<span>Dashboard</span>{/if}
+        {#if sidebarOpen}<span>{$t.nav.dashboard}</span>{/if}
       </a>
 
       <!-- Nodes -->
@@ -101,7 +103,7 @@
             <line x1="12" y1="7" x2="5" y2="17"/><line x1="12" y1="7" x2="19" y2="17"/>
           </svg>
           {#if sidebarOpen}
-            <span>Nodes</span>
+            <span>{$t.nav.nodes}</span>
             <svg class="chevron" class:rotated={expandedNodes} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <polyline points="6 9 12 15 18 9"/>
             </svg>
@@ -155,7 +157,7 @@
           <circle cx="12" cy="12" r="3"/>
           <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
         </svg>
-        {#if sidebarOpen}<span>Settings</span>{/if}
+        {#if sidebarOpen}<span>{$t.nav.settings}</span>{/if}
       </a>
 
       <button class="nav-item" on:click={logout}>
@@ -163,7 +165,7 @@
           <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
           <polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
         </svg>
-        {#if sidebarOpen}<span>Logout</span>{/if}
+        {#if sidebarOpen}<span>{$t.nav.logout}</span>{/if}
       </button>
     </div>
   </aside>
@@ -195,6 +197,10 @@
               <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
             </svg>
           {/if}
+        </button>
+
+        <button class="lang-btn" on:click={() => locale.toggle()} title="Toggle language">
+          {$locale === 'en' ? 'EN' : '한국어'}
         </button>
 
         <div class="user-info">
@@ -320,6 +326,20 @@
     transition: color 0.15s, background 0.15s;
   }
   .icon-btn:hover { color: var(--text-primary); background: var(--row-hover); }
+
+  .lang-btn {
+    height: 36px;
+    padding: 0 10px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 8px; border: 1px solid var(--border-color);
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 12px; font-weight: 600; letter-spacing: 0.02em;
+    transition: color 0.15s, background 0.15s, border-color 0.15s;
+    white-space: nowrap;
+  }
+  .lang-btn:hover { color: var(--text-primary); background: var(--row-hover); border-color: var(--accent); }
 
   .user-info {
     display: flex; align-items: center; gap: 8px;

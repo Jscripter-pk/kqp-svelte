@@ -3,6 +3,7 @@
   import { goto } from "$app/navigation";
   import { fetcher, endpoints } from "$lib/api";
   import Breadcrumb from "$lib/components/common/Breadcrumb.svelte";
+  import { t } from "$lib/i18n";
 
   $: nodeId = $page.params.node;
   let items: any[] = [];
@@ -22,8 +23,8 @@
   $: nodeId, loadData();
 </script>
 
-<Breadcrumb node={nodeId} pages={[{ pageName: "Identifier List" }]} />
-<h1 class="page-title">Identifier List</h1>
+<Breadcrumb node={nodeId} pages={[{ pageName: $t.identify.title }]} />
+<h1 class="page-title">{$t.identify.title}</h1>
 
 <div class="card" style="padding:0;overflow:auto;">
   {#if loading}
@@ -32,19 +33,19 @@
     </div>
   {:else if items.length === 0}
     <div style="padding:40px;text-align:center;color:var(--text-muted)">
-      No identifiers found
+      {$t.identify.noData}
     </div>
   {:else}
     <table>
       <thead
         ><tr>
           <th></th>
-          <th>ID</th>
-          <th>Identifier Name</th>
-          <th>Path</th>
-          <th>Timestamp</th>
-          <th>Ref. SPECs</th>
-          <th>Description</th>
+          <th>{$t.common.id}</th>
+          <th>{$t.identify.identifierName}</th>
+          <th>{$t.common.path}</th>
+          <th>{$t.common.timestamp}</th>
+          <th>{$t.identify.refSpecs}</th>
+          <th>{$t.common.description}</th>
           <th></th>
         </tr></thead
       >

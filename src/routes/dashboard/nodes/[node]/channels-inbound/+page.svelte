@@ -2,6 +2,7 @@
   import { page } from '$app/stores';
   import { fetcher, endpoints } from '$lib/api';
   import Breadcrumb from '$lib/components/common/Breadcrumb.svelte';
+  import { t } from '$lib/i18n';
 
   $: nodeId = $page.params.node;
 
@@ -22,24 +23,24 @@
   $: nodeId, loadData();
 </script>
 
-<Breadcrumb node={nodeId} pages={[{ pageName: 'Channel Inbound' }]} />
-<h1 class="page-title">Channel Inbound</h1>
+<Breadcrumb node={nodeId} pages={[{ pageName: $t.channel.inboundTitle }]} />
+<h1 class="page-title">{$t.channel.inboundTitle}</h1>
 
 <div class="card" style="padding:0;overflow:auto;">
   {#if loading}
     <div style="display:flex;justify-content:center;padding:40px"><span class="loading-spinner"></span></div>
   {:else if channels.length === 0}
-    <div style="padding:40px;text-align:center;color:var(--text-muted)">No channels found</div>
+    <div style="padding:40px;text-align:center;color:var(--text-muted)">{$t.channel.noInbound}</div>
   {:else}
     <table>
       <thead>
         <tr>
-          <th style="text-align:right">ID</th>
-          <th>Name</th><th>Topic</th><th>Type</th><th>UType</th>
-          <th style="text-align:right">Port</th>
-          <th style="text-align:right">IP</th>
-          <th style="text-align:right">NIC</th>
-          <th style="text-align:right">Count</th>
+          <th style="text-align:right">{$t.common.id}</th>
+          <th>{$t.common.name}</th><th>{$t.channel.topic}</th><th>{$t.common.type}</th><th>{$t.channel.utype}</th>
+          <th style="text-align:right">{$t.channel.port}</th>
+          <th style="text-align:right">{$t.channel.ip}</th>
+          <th style="text-align:right">{$t.channel.nic}</th>
+          <th style="text-align:right">{$t.channel.count}</th>
         </tr>
       </thead>
       <tbody>

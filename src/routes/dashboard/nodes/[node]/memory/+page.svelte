@@ -5,6 +5,7 @@
   import Breadcrumb from '$lib/components/common/Breadcrumb.svelte';
   import Pagination from '$lib/components/common/Pagination.svelte';
   import ChartArea from '$lib/components/dashboard/ChartArea.svelte';
+  import { t } from '$lib/i18n';
 
   $: nodeId = $page.params.node;
 
@@ -69,20 +70,20 @@
   function onReset() { searchCode = ''; searchInput = ''; offset = 1; loadData(); }
 </script>
 
-<Breadcrumb node={nodeId} pages={[{ pageName: 'Memory' }]} />
-<h1 class="page-title">Memory</h1>
+<Breadcrumb node={nodeId} pages={[{ pageName: $t.memory.title }]} />
+<h1 class="page-title">{$t.memory.title}</h1>
 
 <div class="memory-layout">
   <!-- Left Stats -->
   <div class="left-panel">
     <div class="stats-grid">
       <div class="stat-box">
-        <div class="stat-lbl">Issues</div>
+        <div class="stat-lbl">{$t.memory.issues}</div>
         <div class="stat-divider"></div>
         <div class="stat-val">{issues.max_issue_count}</div>
       </div>
       <div class="stat-box">
-        <div class="stat-lbl">Compet</div>
+        <div class="stat-lbl">{$t.memory.compet}</div>
         <div class="stat-divider"></div>
         <div class="stat-val">{issues.compet_count}</div>
       </div>
@@ -96,10 +97,10 @@
   <div class="right-panel">
     <!-- Search -->
     <div class="search-bar card">
-      <input placeholder="Search by code..." bind:value={searchInput}
+      <input placeholder={$t.memory.searchPlaceholder} bind:value={searchInput}
         on:keydown={e => e.key === 'Enter' && onSearch()} />
-      <button class="btn primary" on:click={onSearch}>Search</button>
-      <button class="btn" on:click={onReset}>Reset</button>
+      <button class="btn primary" on:click={onSearch}>{$t.memory.search}</button>
+      <button class="btn" on:click={onReset}>{$t.memory.reset}</button>
     </div>
 
     <div class="pagination-bar">
@@ -121,14 +122,14 @@
         <table>
           <thead>
             <tr>
-              <th style="text-align:right">SEQ</th>
-              <th>CODE</th><th>K.Name</th><th>Daily Info</th>
-              <th style="text-align:right">Compet</th>
+              <th style="text-align:right">{$t.memory.seq}</th>
+              <th>{$t.memory.code}</th><th>{$t.memory.kName}</th><th>{$t.memory.dailyInfo}</th>
+              <th style="text-align:right">{$t.memory.compet}</th>
             </tr>
           </thead>
           <tbody>
             {#if issues.issueList.length === 0}
-              <tr><td colspan="5" style="padding:40px;text-align:center;color:var(--text-muted)">No memory data found</td></tr>
+              <tr><td colspan="5" style="padding:40px;text-align:center;color:var(--text-muted)">{$t.memory.noData}</td></tr>
             {:else}
               {#each issues.issueList as issue}
                 <tr class="clickable" on:click={() => goto(`/dashboard/nodes/${nodeId}/memory/${issue.code}`)}>

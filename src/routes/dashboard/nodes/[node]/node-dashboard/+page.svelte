@@ -3,6 +3,7 @@
   import { onMount } from "svelte";
   import { fetcher, endpoints } from "$lib/api";
   import { nodesStore } from "$lib/stores/nodes";
+  import { t } from "$lib/i18n";
   import Breadcrumb from "$lib/components/common/Breadcrumb.svelte";
   import ChartArea from "$lib/components/dashboard/ChartArea.svelte";
 
@@ -67,8 +68,8 @@
   $: isOnline = serviceStatus?.okay ?? false;
 </script>
 
-<Breadcrumb node={nodeId} pages={[{ pageName: "Node Dashboard" }]} />
-<h1 class="page-title">Node Dashboard</h1>
+<Breadcrumb node={nodeId} pages={[{ pageName: $t.nodeDashboard.title }]} />
+<h1 class="page-title">{$t.nodeDashboard.title}</h1>
 
 {#if loading}
   <div class="loading-box"><span class="loading-spinner"></span></div>
@@ -93,7 +94,7 @@
               class:dot-online={isOnline}
               class:dot-offline={!isOnline}
             ></span>
-            {isOnline ? "Online" : "Offline"}
+            {isOnline ? $t.nodeDashboard.online : $t.nodeDashboard.offline}
           </span>
           <div class="node-id-row">
             <span class="node-id-text">{nodeId}</span>
@@ -110,7 +111,7 @@
         <!-- Emittable & Emit Count -->
         <div class="info-section">
           <div class="info-row">
-            <span class="info-label">EMITABLE</span>
+            <span class="info-label">{$t.nodeDashboard.emittable}</span>
             <span
               class="info-badge"
               class:badge-ok={serviceStatus?.emittable || nodeInfo?.emittable}
@@ -119,12 +120,12 @@
               )}
             >
               {serviceStatus?.emittable || nodeInfo?.emittable
-                ? "True"
-                : "False"}
+                ? $t.nodeDashboard.trueVal
+                : $t.nodeDashboard.falseVal}
             </span>
           </div>
           <div class="info-row">
-            <span class="info-label">Emit Count</span>
+            <span class="info-label">{$t.nodeDashboard.emitCount}</span>
             <span class="info-value"
               >{(nodeInfo?.emit_count ?? 0).toLocaleString()}</span
             >
@@ -134,11 +135,11 @@
         <!-- Disk Section -->
         {#if diskData}
           <div class="disk-section">
-            <div class="disk-label">Disk</div>
+            <div class="disk-label">{$t.nodeDashboard.disk}</div>
             <div class="disk-pct">{diskData.disk_usage}%</div>
             <div class="disk-used">
               <span class="disk-used-bold">{diskData.disk_used_size} GB</span>
-              of {diskData.disk_total_size} GB
+              {$t.nodeDashboard.of} {diskData.disk_total_size} GB
             </div>
             <div class="progress-track">
               <div
@@ -186,13 +187,13 @@
                   class="tab-btn"
                   class:tab-active={inboundMetric === "inbound_count"}
                   on:click={() => (inboundMetric = "inbound_count")}
-                  >count</button
+                  >{$t.nodeDashboard.count}</button
                 >
                 <button
                   class="tab-btn"
                   class:tab-active={inboundMetric === "inbound_bytes"}
                   on:click={() => (inboundMetric = "inbound_bytes")}
-                  >byte</button
+                  >{$t.nodeDashboard.byte}</button
                 >
               </div>
               <ChartArea
@@ -213,13 +214,13 @@
                   class="tab-btn"
                   class:tab-active={outboundMetric === "outbound_count"}
                   on:click={() => (outboundMetric = "outbound_count")}
-                  >count</button
+                  >{$t.nodeDashboard.count}</button
                 >
                 <button
                   class="tab-btn"
                   class:tab-active={outboundMetric === "outbound_bytes"}
                   on:click={() => (outboundMetric = "outbound_bytes")}
-                  >byte</button
+                  >{$t.nodeDashboard.byte}</button
                 >
               </div>
               <ChartArea

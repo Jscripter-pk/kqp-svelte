@@ -2,6 +2,7 @@
   import { page } from '$app/stores';
   import { fetcher, endpoints } from '$lib/api';
   import Breadcrumb from '$lib/components/common/Breadcrumb.svelte';
+  import { t } from '$lib/i18n';
 
   $: nodeId = $page.params.node;
 
@@ -192,8 +193,8 @@
   let auditCollapsed = false;
 </script>
 
-<Breadcrumb node={nodeId} pages={[{ pageName: 'Replay' }]} />
-<h1 class="page-title">Replay</h1>
+<Breadcrumb node={nodeId} pages={[{ pageName: $t.replay.title }]} />
+<h1 class="page-title">{$t.replay.title}</h1>
 
 {#if loading}
   <div class="loading-box"><span class="loading-spinner"></span></div>
@@ -207,14 +208,14 @@
           <thead>
             <tr>
               <th></th>
-              <th>PID</th>
-              <th>Command</th>
+              <th>{$t.replay.pid}</th>
+              <th>{$t.replay.command}</th>
               <th></th>
             </tr>
           </thead>
           <tbody>
             {#if processData.length === 0}
-              <tr><td colspan="4" class="empty-cell">No Processes Found</td></tr>
+              <tr><td colspan="4" class="empty-cell">{$t.replay.noProcesses}</td></tr>
             {:else}
               {#each processData as row, index}
                 <tr
@@ -226,7 +227,7 @@
                   <td>
                     <span class="chip play-chip">
                       <span class="dot-green"></span>
-                      Play
+                      {$t.replay.play}
                     </span>
                   </td>
                   <td class="text-muted-cell">{row.pid}</td>
@@ -246,15 +247,15 @@
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M13.293 2.707a1 1 0 0 0-1.414 0L8.5 6.086 6.914 4.5l3.379-3.379a1 1 0 0 0-1.414-1.414L5.5 3.086 4.207 1.793a1 1 0 0 0-1.414 0L1.086 3.5a1 1 0 0 0 0 1.414L2.379 6.207.707 7.879a1 1 0 0 0 0 1.414l5 5a1 1 0 0 0 1.414 0l1.672-1.672 1.293 1.293a1 1 0 0 0 1.414 0l1.707-1.707a1 1 0 0 0 0-1.414L11.914 9.5l3.379-3.379a1 1 0 0 0 0-1.414l-2-2z" fill="#F0F1F5"/>
         </svg>
-        <span>Tool</span>
+        <span>{$t.replay.tool}</span>
       </div>
       <div class="tool-input-row">
         <div class="pid-input-wrapper">
-          <span class="pid-label">PID |</span>
+          <span class="pid-label">{$t.replay.pidLabel}</span>
           <input
             type="text"
             class="pid-input"
-            placeholder="Tab the list"
+            placeholder={$t.replay.tabList}
             bind:value={toolPid}
           />
           {#if toolPid}
@@ -267,7 +268,7 @@
           disabled={!toolPid}
           on:click={() => (killDialogOpen = true)}
         >
-          Kill
+          {$t.replay.kill}
         </button>
       </div>
     </div>
@@ -279,7 +280,7 @@
     <div class="audit-section">
       <div class="audit-header desktop-only-xl">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 2h10a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1zm1 2v2h8V4H4zm0 4v1h5V8H4zm0 3v1h3v-1H4z" fill="#F0F1F5"/></svg>
-        <span>Audit Log</span>
+        <span>{$t.replay.auditLog}</span>
       </div>
 
       <!-- Audit Log Summary (desktop xl) -->
@@ -288,43 +289,43 @@
           <div class="audit-value-large">{logType || '-'} : {file || '-'}</div>
           <div class="audit-row bordered">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" rx="2" stroke="#F4F4F8" stroke-width="1.2" fill="none"/><path d="M5 1v2M11 1v2M2 6h12" stroke="#F4F4F8" stroke-width="1.2"/></svg>
-            <span class="audit-label">Date</span>
+            <span class="audit-label">{$t.replay.date}</span>
             <span class="audit-text">{date || '0000-00-00'}</span>
           </div>
         </div>
         <div class="audit-col">
           <div class="audit-row bordered">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="#F4F4F8" stroke-width="1.2" fill="none"/><path d="M8 4v4l3 2" stroke="#F4F4F8" stroke-width="1.2" stroke-linecap="round"/></svg>
-            <span class="audit-label">Start Time</span>
+            <span class="audit-label">{$t.replay.startTime}</span>
             <span class="audit-text">{startTime || '00:00:00'}</span>
           </div>
           <div class="audit-row bordered">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="#F4F4F8" stroke-width="1.2" fill="none"/><path d="M8 4v4l3 2" stroke="#F4F4F8" stroke-width="1.2" stroke-linecap="round"/></svg>
-            <span class="audit-label">End Time</span>
+            <span class="audit-label">{$t.replay.endTime}</span>
             <span class="audit-text">{endTime || '00:00:00'}</span>
           </div>
         </div>
         <div class="audit-col">
           <div class="audit-row bordered">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 3h10v2H3zM5 7h6v6H5z" stroke="#F4F4F8" stroke-width="1.2" fill="none"/></svg>
-            <span class="audit-label">Head</span>
+            <span class="audit-label">{$t.replay.head}</span>
             <span class="audit-text">{head || '-'}</span>
           </div>
           <div class="audit-row bordered">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 3h10v2H3zM5 7h6v6H5z" stroke="#F4F4F8" stroke-width="1.2" fill="none"/></svg>
-            <span class="audit-label">Channel Number</span>
+            <span class="audit-label">{$t.replay.channelNumber}</span>
             <span class="audit-text">{channel || '-'}</span>
           </div>
         </div>
         <div class="audit-col audit-col-wide">
           <div class="audit-row bordered">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1.333C5.285 1.333 3.238 2.357 3.238 3.714V12.286C3.238 13.643 5.285 14.667 8 14.667C10.715 14.667 12.762 13.643 12.762 12.286V3.714C12.762 2.357 10.715 1.333 8 1.333Z" fill="#F4F4F8"/></svg>
-            <span class="audit-label">Destination To</span>
+            <span class="audit-label">{$t.replay.destinationTo}</span>
             <span class="audit-text">{outboundExpression || '-'}</span>
           </div>
           <div class="audit-row bordered">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 3l6 5-6 5V3z" fill="#F4F4F8"/></svg>
-            <span class="audit-label">Speed</span>
+            <span class="audit-label">{$t.replay.speed}</span>
             <span class="audit-text">{currentSpeed || '-'}</span>
           </div>
           <div class="audit-replay-btn-wrapper desktop-only-xl">
@@ -334,7 +335,7 @@
               disabled={!canReplay}
               on:click={() => (replayDialogOpen = true)}
             >
-              Replay <span class="chevron">›</span>
+              {$t.replay.replayBtn} <span class="chevron">›</span>
             </button>
           </div>
         </div>
@@ -345,11 +346,11 @@
         <div class="audit-collapse-header">
           <div class="audit-collapse-left">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 2h10a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1zm1 2v2h8V4H4zm0 4v1h5V8H4zm0 3v1h3v-1H4z" fill="#F0F1F5"/></svg>
-            <span>Audit Log</span>
+            <span>{$t.replay.auditLog}</span>
           </div>
           <div class="audit-collapse-right">
             <button class="replay-btn replay-btn-sm" class:replay-active={canReplay} disabled={!canReplay} on:click={() => (replayDialogOpen = true)}>
-              Replay <span class="chevron">›</span>
+              {$t.replay.replayBtn} <span class="chevron">›</span>
             </button>
             <button class="collapse-toggle" on:click={() => (auditCollapsed = !auditCollapsed)}>
               {#if auditCollapsed}▲{:else}▼{/if}
@@ -360,27 +361,27 @@
           <span class="audit-value-large">{logType || '-'} : {file || '-'}</span>
           <span class="audit-row-inline">
             <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" rx="2" stroke="#F4F4F8" stroke-width="1.2" fill="none"/><path d="M5 1v2M11 1v2M2 6h12" stroke="#F4F4F8" stroke-width="1.2"/></svg>
-            Date {date || '0000-00-00'}
+            {$t.replay.date} {date || '0000-00-00'}
           </span>
         </div>
         {#if auditCollapsed}
           <div class="audit-expanded-rows">
             <div class="audit-detail-row">
-              <span>Start Time: {startTime || '00:00:00'}</span>
-              <span>End Time: {endTime || '00:00:00'}</span>
+              <span>{$t.replay.startTimeLabel}{startTime || '00:00:00'}</span>
+              <span>{$t.replay.endTimeLabel}{endTime || '00:00:00'}</span>
             </div>
             <div class="audit-detail-row">
-              <span>Head: {head || '-'}</span>
-              <span>Channel: {channel || '-'}</span>
+              <span>{$t.replay.headLabel}{head || '-'}</span>
+              <span>{$t.replay.channelLabel}{channel || '-'}</span>
             </div>
             <div class="audit-detail-row">
-              <span>Destination To: {outboundExpression || '-'}</span>
-              <span>Speed: {currentSpeed || '-'}</span>
+              <span>{$t.replay.destinationLabel}{outboundExpression || '-'}</span>
+              <span>{$t.replay.speedLabel}{currentSpeed || '-'}</span>
             </div>
           </div>
           <div class="mobile-replay-btn">
             <button class="replay-btn replay-btn-full" class:replay-active={canReplay} disabled={!canReplay} on:click={() => (replayDialogOpen = true)}>
-              Replay <span class="chevron">›</span>
+              {$t.replay.replayBtn} <span class="chevron">›</span>
             </button>
           </div>
         {/if}
@@ -388,16 +389,16 @@
 
       <!-- Replay Interface -->
       <div class="interface-section">
-        <div class="interface-header">Replay Interface</div>
+        <div class="interface-header">{$t.replay.replayInterface}</div>
         <div class="interface-grid">
 
           <!-- Panel 1: Log Type + File -->
           <div class="panel">
             <div class="field-group">
-              <label class="field-label">Log Type</label>
+              <label class="field-label">{$t.replay.logType}</label>
               {#if logType === ''}
                 <select class="dark-select" bind:value={logType}>
-                  <option value="" disabled>Select</option>
+                  <option value="" disabled>{$t.replay.selectPlaceholder}</option>
                   {#each logTypeList as opt}
                     <option value={opt.label}>{opt.label}</option>
                   {/each}
@@ -410,10 +411,10 @@
               {/if}
             </div>
             <div class="field-group">
-              <label class="field-label">File</label>
+              <label class="field-label">{$t.replay.file}</label>
               {#if file === ''}
                 <select class="dark-select" bind:value={file}>
-                  <option value="" disabled>Select</option>
+                  <option value="" disabled>{$t.replay.selectPlaceholder}</option>
                   {#each fileOptions as opt}
                     <option value={opt.label}>{opt.label}</option>
                   {/each}
@@ -430,7 +431,7 @@
           <!-- Panel 2: Date + Start/End Time -->
           <div class="panel">
             <div class="field-group">
-              <label class="field-label">Date</label>
+              <label class="field-label">{$t.replay.date}</label>
               {#if date === '' || date === '0000-00-00'}
                 <select class="dark-select dark-select-wide" bind:value={date}>
                   <option value="0000-00-00" disabled>0000-00-00</option>
@@ -446,7 +447,7 @@
               {/if}
             </div>
             <div class="field-group">
-              <label class="field-label">Start Time</label>
+              <label class="field-label">{$t.replay.startTime}</label>
               {#if startTime !== ''}
                 <input type="time" step="1" class="dark-input time-input" bind:value={startTime} />
               {:else}
@@ -457,7 +458,7 @@
               {/if}
             </div>
             <div class="field-group">
-              <label class="field-label">End Time</label>
+              <label class="field-label">{$t.replay.endTime}</label>
               {#if endTime !== ''}
                 <input type="time" step="1" class="dark-input time-input" bind:value={endTime} />
               {:else}
@@ -472,10 +473,10 @@
           <!-- Panel 3: Head + Channel -->
           <div class="panel">
             <div class="field-group">
-              <label class="field-label">Head</label>
+              <label class="field-label">{$t.replay.head}</label>
               {#if head === 'All' || head === ''}
                 <button class="all-btn" on:click={() => handleOpenFilterDialog('HEAD')}>
-                  All
+                  {$t.replay.all}
                   <span class="all-arrows">▲▼</span>
                 </button>
               {:else}
@@ -487,7 +488,7 @@
               {#if filterDialogOpen && filterTarget === 'HEAD'}
                 <div class="filter-dialog">
                   <div class="filter-input-row">
-                    <span class="filter-prefix">Typing |</span>
+                    <span class="filter-prefix">{$t.replay.typingPrefix}</span>
                     <input class="filter-input" bind:value={dialogExpression} placeholder="" />
                     {#if dialogExpression}
                       <button class="clear-btn-sm" on:click={() => (dialogExpression = '')}>✕</button>
@@ -497,18 +498,18 @@
                     <div class="filter-error">{filterError}</div>
                   {/if}
                   <div class="filter-actions">
-                    <button class="btn-secondary" on:click={() => { handleFilterReset(); handleCloseFilterDialog(); }}>Cancel</button>
-                    <button class="btn-primary" on:click={handleFilterConfirm}>Apply</button>
+                    <button class="btn-secondary" on:click={() => { handleFilterReset(); handleCloseFilterDialog(); }}>{$t.replay.cancel}</button>
+                    <button class="btn-primary" on:click={handleFilterConfirm}>{$t.replay.apply}</button>
                   </div>
                 </div>
               {/if}
             </div>
 
             <div class="field-group">
-              <label class="field-label">Channel Number</label>
+              <label class="field-label">{$t.replay.channelNumber}</label>
               {#if channel === 'All' || channel === ''}
                 <button class="all-btn" on:click={() => handleOpenFilterDialog('CHANNEL')}>
-                  All
+                  {$t.replay.all}
                   <span class="all-arrows">▲▼</span>
                 </button>
               {:else}
@@ -520,7 +521,7 @@
               {#if filterDialogOpen && filterTarget === 'CHANNEL'}
                 <div class="filter-dialog">
                   <div class="filter-input-row">
-                    <span class="filter-prefix">Typing |</span>
+                    <span class="filter-prefix">{$t.replay.typingPrefix}</span>
                     <input class="filter-input" bind:value={dialogExpression} placeholder="" />
                     {#if dialogExpression}
                       <button class="clear-btn-sm" on:click={() => (dialogExpression = '')}>✕</button>
@@ -530,8 +531,8 @@
                     <div class="filter-error">{filterError}</div>
                   {/if}
                   <div class="filter-actions">
-                    <button class="btn-secondary" on:click={() => { handleFilterReset(); handleCloseFilterDialog(); }}>Cancel</button>
-                    <button class="btn-primary" on:click={handleFilterConfirm}>Apply</button>
+                    <button class="btn-secondary" on:click={() => { handleFilterReset(); handleCloseFilterDialog(); }}>{$t.replay.cancel}</button>
+                    <button class="btn-primary" on:click={handleFilterConfirm}>{$t.replay.apply}</button>
                   </div>
                 </div>
               {/if}
@@ -541,17 +542,17 @@
           <!-- Panel 4: Destination + Speed -->
           <div class="panel">
             <div class="field-group">
-              <label class="field-label">Destination To</label>
+              <label class="field-label">{$t.replay.destinationTo}</label>
               {#if outboundExpression === ''}
                 <div class="outbound-input-group">
                   <div class="outbound-field">
-                    <span class="outbound-prefix">Typing |</span>
-                    <input class="outbound-input" bind:value={outboundInput} placeholder="<app>.<inst>" />
+                    <span class="outbound-prefix">{$t.replay.typingPrefix}</span>
+                    <input class="outbound-input" bind:value={outboundInput} placeholder={$t.replay.appInstPlaceholder} />
                     {#if outboundInput}
                       <button class="clear-btn-sm" on:click={() => (outboundInput = '')}>✕</button>
                     {/if}
                   </div>
-                  <button class="btn-primary apply-btn" on:click={() => (outboundExpression = outboundInput)}>Apply</button>
+                  <button class="btn-primary apply-btn" on:click={() => (outboundExpression = outboundInput)}>{$t.replay.apply}</button>
                 </div>
               {:else}
                 <span class="log-tag">
@@ -561,7 +562,7 @@
               {/if}
             </div>
             <div class="field-group">
-              <label class="field-label">Speed</label>
+              <label class="field-label">{$t.replay.speed}</label>
               <div class="speed-control">
                 <input
                   type="text"
@@ -590,21 +591,21 @@
     <div class="dialog-box" on:click|stopPropagation>
       <div class="dialog-title">
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="9" stroke="#F0F1F5" stroke-width="1.5" fill="none"/><path d="M10 6v5M10 13v1" stroke="#F0F1F5" stroke-width="1.5" stroke-linecap="round"/></svg>
-        <span>confirm</span>
+        <span>{$t.replay.confirmTitle}</span>
       </div>
       <div class="dialog-content">
         <div class="dialog-pid-row">
-          <span class="dialog-pid-label">PID</span>
+          <span class="dialog-pid-label">{$t.replay.pid}</span>
           <span class="dialog-divider"></span>
           <span class="dialog-pid-value">{toolPid}</span>
         </div>
-        <div class="dialog-message">Would you like to quit?</div>
+        <div class="dialog-message">{$t.replay.killQuestion}</div>
       </div>
       <div class="dialog-actions">
         <button class="btn-primary" disabled={isTerminating} on:click={handleTerminate}>
-          {isTerminating ? 'Terminating...' : 'Yes'}
+          {isTerminating ? $t.replay.terminating : $t.replay.yes}
         </button>
-        <button class="btn-cancel" disabled={isTerminating} on:click={() => (killDialogOpen = false)}>No</button>
+        <button class="btn-cancel" disabled={isTerminating} on:click={() => (killDialogOpen = false)}>{$t.replay.no}</button>
       </div>
     </div>
   </div>
@@ -618,16 +619,16 @@
     <div class="dialog-box" on:click|stopPropagation>
       <div class="dialog-title">
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="9" stroke="#F0F1F5" stroke-width="1.5" fill="none"/><path d="M10 7v0M10 9v4" stroke="#F0F1F5" stroke-width="1.5" stroke-linecap="round"/></svg>
-        <span>confirm</span>
+        <span>{$t.replay.confirmTitle}</span>
       </div>
       <div class="dialog-content">
-        <div class="dialog-message">Replay?</div>
+        <div class="dialog-message">{$t.replay.replayQuestion}</div>
       </div>
       <div class="dialog-actions">
         <button class="btn-primary" disabled={replaying} on:click={handleReplayConfirm}>
-          {replaying ? 'Replaying...' : 'Yes'}
+          {replaying ? $t.replay.replaying : $t.replay.yes}
         </button>
-        <button class="btn-cancel" on:click={() => (replayDialogOpen = false)}>No</button>
+        <button class="btn-cancel" on:click={() => (replayDialogOpen = false)}>{$t.replay.no}</button>
       </div>
     </div>
   </div>

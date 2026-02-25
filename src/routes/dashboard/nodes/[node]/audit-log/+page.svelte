@@ -4,6 +4,7 @@
   import { fetcher, endpoints } from '$lib/api';
   import Breadcrumb from '$lib/components/common/Breadcrumb.svelte';
   import Pagination from '$lib/components/common/Pagination.svelte';
+  import { t } from '$lib/i18n';
 
   $: nodeId = $page.params.node;
 
@@ -14,11 +15,11 @@
   let page_num = 1;
   let limit = 40;
 
-  const types = [
-    { value: 'inbound', label: 'Inbound' },
-    { value: 'outbound', label: 'Outbound' },
-    { value: 'other', label: 'Other' },
-    { value: 'all', label: 'ALL' },
+  $: types = [
+    { value: 'inbound', label: $t.auditLog.inbound },
+    { value: 'outbound', label: $t.auditLog.outbound },
+    { value: 'other', label: $t.auditLog.other },
+    { value: 'all', label: $t.auditLog.all },
   ];
 
   async function loadData() {
@@ -34,14 +35,14 @@
   $: nodeId, type, loadData();
 </script>
 
-<Breadcrumb node={nodeId} pages={[{ pageName: 'Audit Log' }]} />
-<h1 class="page-title">Audit Log</h1>
+<Breadcrumb node={nodeId} pages={[{ pageName: $t.auditLog.title }]} />
+<h1 class="page-title">{$t.auditLog.title}</h1>
 
 <div class="card" style="padding: 12px;">
   <div class="toolbar">
     <select bind:value={type} on:change={() => { page_num = 1; loadData(); }}>
-      {#each types as t}
-        <option value={t.value}>{t.label}</option>
+      {#each types as tp}
+        <option value={tp.value}>{tp.label}</option>
       {/each}
     </select>
     <Pagination
@@ -59,16 +60,16 @@
     {#if loading}
       <div style="display:flex;justify-content:center;padding:40px"><span class="loading-spinner"></span></div>
     {:else if auditLogs.length === 0}
-      <div style="padding:40px;text-align:center;color:var(--text-muted)">No audit logs found</div>
+      <div style="padding:40px;text-align:center;color:var(--text-muted)">{$t.auditLog.noData}</div>
     {:else}
       <table>
         <thead>
           <tr>
-            <th style="text-align:right">No</th>
-            <th style="text-align:right">Date</th>
-            <th>Type</th>
-            <th style="text-align:right">Description</th>
-            <th style="text-align:right">Size</th>
+            <th style="text-align:right">{$t.auditLog.no}</th>
+            <th style="text-align:right">{$t.auditLog.date}</th>
+            <th>{$t.common.type}</th>
+            <th style="text-align:right">{$t.common.description}</th>
+            <th style="text-align:right">{$t.common.size}</th>
           </tr>
         </thead>
         <tbody>

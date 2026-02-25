@@ -1,9 +1,9 @@
 <script lang="ts">
   import { page } from "$app/stores";
   import { goto } from "$app/navigation";
-  import { onMount } from "svelte";
   import { fetcher, endpoints } from "$lib/api";
   import Breadcrumb from "$lib/components/common/Breadcrumb.svelte";
+  import { t } from "$lib/i18n";
 
   $: nodeId = $page.params.node;
 
@@ -32,8 +32,8 @@
   $: nodeId, loadData();
 </script>
 
-<Breadcrumb node={nodeId} pages={[{ pageName: "Process" }]} />
-<h1 class="page-title">Process</h1>
+<Breadcrumb node={nodeId} pages={[{ pageName: $t.process.title }]} />
+<h1 class="page-title">{$t.process.title}</h1>
 
 <div class="card" style="padding: 0; overflow: auto;">
   {#if loading}
@@ -41,21 +41,23 @@
       <span class="loading-spinner"></span>
     </div>
   {:else if error}
-    <div style="padding:20px;color:var(--error)">Error: {error}</div>
+    <div style="padding:20px;color:var(--error)">
+      {$t.common.errorPrefix}{error}
+    </div>
   {:else if processes.length === 0}
     <div style="padding:40px;text-align:center;color:var(--text-muted)">
-      No processes found
+      {$t.process.noProcesses}
     </div>
   {:else}
     <table>
       <thead>
         <tr>
-          <th style="text-align:right">PID</th>
-          <th>NAME</th><th>PARAM</th>
-          <th style="text-align:right">CPU</th>
-          <th style="text-align:right">MEM</th>
-          <th style="text-align:right">PPID</th>
-          <th style="text-align:right">COMMAND</th>
+          <th style="text-align:right">{$t.process.pid}</th>
+          <th>{$t.process.name}</th><th>{$t.process.param}</th>
+          <th style="text-align:right">{$t.process.cpu}</th>
+          <th style="text-align:right">{$t.process.mem}</th>
+          <th style="text-align:right">{$t.process.ppid}</th>
+          <th style="text-align:right">{$t.process.command}</th>
         </tr>
       </thead>
       <tbody>
@@ -64,7 +66,7 @@
             class="clickable"
             on:click={() =>
               goto(
-                `/dashboard/nodes/${nodeId}/process/${encodeURIComponent(proc.NAME)}`,
+                `/dashboard/nodes/${nodeId}/process/${encodeURIComponent(proc.APPCODE)}`,
               )}
           >
             <td style="text-align:right">{proc.PID}</td>

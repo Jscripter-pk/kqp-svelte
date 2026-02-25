@@ -3,6 +3,7 @@
   import { goto } from '$app/navigation';
   import { nodesStore, type INodeItem } from '$lib/stores/nodes';
   import { fetcher, endpoints } from '$lib/api';
+  import { t } from '$lib/i18n';
   import Breadcrumb from '$lib/components/common/Breadcrumb.svelte';
   import ChartArea from '$lib/components/dashboard/ChartArea.svelte';
 
@@ -51,12 +52,12 @@
 </script>
 
 <Breadcrumb />
-<h1 class="page-title">Dashboard</h1>
+<h1 class="page-title">{$t.dashboard.title}</h1>
 
 <!-- Stats -->
 <div class="stats-bar">
   <div class="stat-box total">
-    <div class="stat-label">Total</div>
+    <div class="stat-label">{$t.dashboard.total}</div>
     <div class="stat-divider"></div>
     <div class="stat-value">{totalNodes}</div>
   </div>
@@ -74,22 +75,22 @@
 <div class="grid-2">
   <!-- Node List -->
   <div>
-    <h3 class="section-title">Nodes</h3>
+    <h3 class="section-title">{$t.dashboard.nodes}</h3>
     <div class="card" style="padding: 0; overflow: auto; max-height: calc(100vh - 320px);">
       {#if nodesLoading}
         <div class="center-loading"><span class="loading-spinner"></span></div>
       {:else if nodes.length === 0}
-        <div class="empty-msg">No nodes found</div>
+        <div class="empty-msg">{$t.dashboard.noNodesFound}</div>
       {:else}
         <table>
           <thead>
             <tr>
-              <th>State</th>
-              <th>ID</th>
-              <th>Name</th>
-              <th>Description</th>
-              <th>Emittable</th>
-              <th style="text-align:right">Emit Count</th>
+              <th>{$t.dashboard.state}</th>
+              <th>{$t.dashboard.id}</th>
+              <th>{$t.dashboard.name}</th>
+              <th>{$t.dashboard.description}</th>
+              <th>{$t.dashboard.emittable}</th>
+              <th style="text-align:right">{$t.dashboard.emitCount}</th>
             </tr>
           </thead>
           <tbody>
@@ -99,7 +100,7 @@
                 <td>
                   <span class="chip {node.online_status ? 'online' : 'offline'}">
                     <span class="dot {node.online_status ? 'online' : 'offline'}"></span>
-                    {node.online_status ? 'Online' : 'Offline'}
+                    {node.online_status ? $t.dashboard.online : $t.dashboard.offline}
                   </span>
                 </td>
                 <td>{node.id}</td>
@@ -107,7 +108,7 @@
                 <td>{node.desc}</td>
                 <td>
                   <span class="chip {node.emittable ? 'yes' : 'no'}">
-                    {node.emittable ? 'Yes' : 'No'}
+                    {node.emittable ? $t.dashboard.yes : $t.dashboard.no}
                   </span>
                 </td>
                 <td style="text-align:right">{node.emit_count.toLocaleString()}</td>
@@ -122,7 +123,7 @@
   <!-- Node Info -->
   <div>
     <div class="info-header">
-      <h3 class="section-title">Info</h3>
+      <h3 class="section-title">{$t.dashboard.info}</h3>
       <div class="layout-toggle">
         <button class:active={layout === '2x2'} on:click={() => layout = '2x2'}>2×2</button>
         <button class:active={layout === '1x4'} on:click={() => layout = '1x4'}>1×4</button>
@@ -130,7 +131,7 @@
     </div>
 
     {#if !selectedNode}
-      <div class="card empty-msg">Select a node to see info</div>
+      <div class="card empty-msg">{$t.dashboard.selectNode}</div>
     {:else}
       <div class="node-info-grid" class:layout-1x4={layout === '1x4'}>
         <!-- Status panel -->
@@ -138,7 +139,7 @@
           <div class="status-header" class:online-bg={selectedNode.online_status} class:offline-bg={!selectedNode.online_status}>
             <span class="chip {selectedNode.online_status ? 'online' : 'offline'}">
               <span class="dot {selectedNode.online_status ? 'online' : 'offline'}"></span>
-              {selectedNode.online_status ? 'Online' : 'Offline'}
+              {selectedNode.online_status ? $t.dashboard.online : $t.dashboard.offline}
             </span>
             <div class="node-id-name">
               <span class="node-id">{selectedNode.id}</span>
@@ -149,18 +150,18 @@
           </div>
           <div class="status-details">
             <div class="detail-row">
-              <span class="detail-label">Emittable</span>
-              <span class="chip {selectedNode.emittable ? 'yes' : 'no'}">{selectedNode.emittable ? 'True' : 'False'}</span>
+              <span class="detail-label">{$t.dashboard.emittable}</span>
+              <span class="chip {selectedNode.emittable ? 'yes' : 'no'}">{selectedNode.emittable ? $t.dashboard.trueVal : $t.dashboard.falseVal}</span>
             </div>
             <div class="detail-row">
-              <span class="detail-label">Emit Count</span>
+              <span class="detail-label">{$t.dashboard.emitCount}</span>
               <span>{selectedNode.emit_count.toLocaleString()}</span>
             </div>
             {#if diskData}
               <div class="disk-section">
-                <span class="detail-label">Disk</span>
+                <span class="detail-label">{$t.dashboard.disk}</span>
                 <div class="disk-usage">{diskData.disk_usage}%</div>
-                <div class="disk-info">{diskData.disk_used_size} GB of {diskData.disk_total_size} GB</div>
+                <div class="disk-info">{diskData.disk_used_size} GB {$t.dashboard.of} {diskData.disk_total_size} GB</div>
                 <div class="progress-bar">
                   <div class="progress-fill" style="width: {diskData.disk_usage}%"></div>
                   <div class="progress-warning"></div>
@@ -182,13 +183,13 @@
       <!-- Nav Boxes -->
       <div class="nav-boxes">
         <button class="nav-box" on:click={() => goto(`/dashboard/nodes/${selectedNode?.id}/process`)}>
-          <span>Process List</span>
+          <span>{$t.dashboard.processList}</span>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polyline points="9 18 15 12 9 6"/>
           </svg>
         </button>
         <button class="nav-box" on:click={() => goto(`/dashboard/nodes/${selectedNode?.id}/channels-inbound`)}>
-          <span>Channel Inbound</span>
+          <span>{$t.dashboard.channelInbound}</span>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polyline points="9 18 15 12 9 6"/>
           </svg>

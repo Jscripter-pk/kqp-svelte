@@ -139,6 +139,52 @@ export const mockData: Record<string, unknown> = {
       ]
     }
   },
+  "/apik/prod1/rule/rule-001": {
+    "okay": true, "msg": "Success",
+    "data": {
+      "detail": {
+        "name": "rule-001", "path": "/rules/001", "timestamp": "2025-04-10 09:00:00",
+        "ref_layout": "layout-A", "ref_process": 3761797, "ref_actions": "action-001", "desc": "Main trading rule",
+        "related_layouts": [
+          { "name": "layout-A", "ref_count": 15, "url": "/layout/layout-A" },
+          { "name": "layout-C", "ref_count": 8, "url": "/layout/layout-C" }
+        ],
+        "related_processes": [
+          { "name": "beacon", "usage_count": 1204, "url": "/process/beacon" },
+          { "name": "kqp", "usage_count": 3500, "url": "/process/kqp" },
+          { "name": "subsequent", "usage_count": 820, "url": "/process/subsequent" }
+        ],
+        "related_actions": [
+          { "name": "action-001", "usage_count": 4500, "url": "/action/action-001" },
+          { "name": "action-002", "usage_count": 1200, "url": "/action/action-002" }
+        ],
+        "function_def": {
+          "code": "# rule-001: Main Trading Rule\n\n[rule]\nname = rule-001\npriority = high\nenabled = true\n\n[condition]\nmarket_status = open\nissue_type = equity\norder_type = limit\n\n[filter]\nmin_price = 1000\nmax_price = 999999\nmin_qty = 1\nmax_qty = 100000\n\n[action]\non_match = action-001\non_reject = log_reject\non_error = alert_ops\n\n[schedule]\nstart = 09:00:00\nend = 15:30:00\ndays = MON,TUE,WED,THU,FRI\n\n[logging]\nlevel = info\naudit = true"
+        }
+      }
+    }
+  },
+  "/apik/prod1/rule/rule-002": {
+    "okay": true, "msg": "Success",
+    "data": {
+      "detail": {
+        "name": "rule-002", "path": "/rules/002", "timestamp": "2025-04-10 09:30:00",
+        "ref_layout": "layout-B", "ref_process": 1234567, "ref_actions": "action-002", "desc": "Backup rule",
+        "related_layouts": [
+          { "name": "layout-B", "ref_count": 10, "url": "/layout/layout-B" }
+        ],
+        "related_processes": [
+          { "name": "sweeper", "usage_count": 600, "url": "/process/sweeper" }
+        ],
+        "related_actions": [
+          { "name": "action-002", "usage_count": 800, "url": "/action/action-002" }
+        ],
+        "function_def": {
+          "code": "# rule-002: Backup Rule\n\n[rule]\nname = rule-002\npriority = low\nenabled = true\n\n[condition]\nmarket_status = any\nfallback = true\n\n[action]\non_match = action-002\n\n[schedule]\nstart = 00:00:00\nend = 23:59:59\ndays = MON,TUE,WED,THU,FRI,SAT,SUN"
+        }
+      }
+    }
+  },
   "/apik/prod1/action/list": {
     "okay": true, "msg": "Success",
     "data": {
@@ -148,13 +194,64 @@ export const mockData: Record<string, unknown> = {
       ]
     }
   },
+  "/apik/prod1/action/action-001": {
+    "okay": true, "msg": "Success",
+    "data": {
+      "name": "action-001", "path": "/actions/001", "timestamp": "2025-04-10 09:00:00",
+      "ref_layout": "layout-A", "ref_process": 1000, "desc": "Primary action",
+      "layouts": [
+        { "name": "layout-A", "ref_count": 24, "url": "/layout/layout-A" },
+        { "name": "layout-C", "ref_count": 11, "url": "/layout/layout-C" }
+      ],
+      "processes": [
+        { "name": "kqp", "ref_count": 3500, "url": "/process/kqp" },
+        { "name": "beacon", "ref_count": 1204, "url": "/process/beacon" }
+      ],
+      "definition": "# action-001: Primary Action Definition\n\nfunction onTrigger(ctx) {\n  local issue = ctx:getIssue()\n  local price = ctx:getLastPrice()\n  local qty   = ctx:getOrderQty()\n\n  -- Validate order parameters\n  if price <= 0 then\n    return ctx:reject(\"Invalid price\")\n  end\n\n  if qty <= 0 or qty > 100000 then\n    return ctx:reject(\"Invalid quantity\")\n  end\n\n  -- Apply market rules\n  local spread = ctx:getSpread()\n  if spread > ctx:getMaxSpread() then\n    ctx:log(\"WARN\", \"Spread exceeds threshold\")\n  end\n\n  -- Execute order\n  local result = ctx:submitOrder({\n    issue  = issue,\n    price  = price,\n    qty    = qty,\n    side   = ctx:getSide(),\n    tif    = \"GTC\"\n  })\n\n  return result\nend"
+    }
+  },
+  "/apik/prod1/action/action-002": {
+    "okay": true, "msg": "Success",
+    "data": {
+      "name": "action-002", "path": "/actions/002", "timestamp": "2025-04-10 09:30:00",
+      "ref_layout": "layout-B", "ref_process": 2000, "desc": "Secondary action",
+      "layouts": [
+        { "name": "layout-B", "ref_count": 18, "url": "/layout/layout-B" }
+      ],
+      "processes": [
+        { "name": "sweeper", "ref_count": 600, "url": "/process/sweeper" },
+        { "name": "subsequent", "ref_count": 820, "url": "/process/subsequent" }
+      ],
+      "definition": "# action-002: Secondary Action Definition\n\nfunction onFallback(ctx) {\n  local msg = ctx:getMessage()\n  ctx:log(\"INFO\", \"Fallback triggered: \" .. msg)\n\n  -- Retry logic\n  for i = 1, 3 do\n    local ok = ctx:retry()\n    if ok then return true end\n    ctx:sleep(1000)\n  end\n\n  ctx:alert(\"Fallback exhausted retries\")\n  return false\nend"
+    }
+  },
   "/apik/prod1/layout/list": {
     "okay": true, "msg": "Success",
     "data": {
       "list": [
-        { "name": "layout-A", "path": "/layouts/A", "timestamp": "2025-04-10 09:00:00", "ref_process": 5000, "desc": "Primary layout" },
-        { "name": "layout-B", "path": "/layouts/B", "timestamp": "2025-04-10 09:30:00", "ref_process": 6000, "desc": "Secondary layout" }
+        { "name": "layout-A", "path": "/layouts/A", "timestamp": "2025-04-10 09:00:00", "process": "kqp", "channel_in": "channel-A", "desc": "Primary layout" },
+        { "name": "layout-B", "path": "/layouts/B", "timestamp": "2025-04-10 09:30:00", "process": "sweeper", "channel_in": "channel-B", "desc": "Secondary layout" }
       ]
+    }
+  },
+  "/apik/prod1/layout/layout-A": {
+    "okay": true, "msg": "Success",
+    "data": {
+      "detail": {
+        "name": "layout-A", "path": "/layouts/A", "timestamp": "2025-04-10 09:00:00",
+        "process": "kqp", "channel_in": "channel-A", "desc": "Primary layout"
+      },
+      "layout_definition": "# layout-A: Primary Layout Definition\n\n[layout]\nname = layout-A\nversion = 1.0\n\n[source]\nchannel = channel-A\nprotocol = multicast\nformat = binary\n\n[fields]\n0  = data_type     string   2\n1  = issue_code    string  12\n2  = seq_no        int      5\n3  = price         int      9\n4  = volume        long    12\n5  = timestamp     string   8\n\n[transform]\nnormalize = true\nendian = big\npadding = right\n\n[output]\ntarget = kqp\nformat = internal\nbatch_size = 100"
+    }
+  },
+  "/apik/prod1/layout/layout-B": {
+    "okay": true, "msg": "Success",
+    "data": {
+      "detail": {
+        "name": "layout-B", "path": "/layouts/B", "timestamp": "2025-04-10 09:30:00",
+        "process": "sweeper", "channel_in": "channel-B", "desc": "Secondary layout"
+      },
+      "layout_definition": "# layout-B: Secondary Layout Definition\n\n[layout]\nname = layout-B\nversion = 2.0\n\n[source]\nchannel = channel-B\nprotocol = tcp\nformat = text\n\n[fields]\n0  = msg_type      string   1\n1  = order_no      string  10\n2  = price         int      9\n3  = qty           long    12\n4  = side          char     1\n\n[output]\ntarget = sweeper\nformat = csv"
     }
   },
   "/apik/prod1/spec/list": {
@@ -263,9 +360,38 @@ export const mockData: Record<string, unknown> = {
     "okay": true, "msg": "Success",
     "data": {
       "list": [
-        { "id": "FN001", "name": "Function A", "type": "calc", "timestamp": "2025-04-10 09:00:00", "desc": "Calculation function" },
-        { "id": "FN002", "name": "Function B", "type": "filter", "timestamp": "2025-04-10 09:30:00", "desc": "Filter function" }
+        { "name": "fn-calc-spread", "path": "/functions/calc-spread", "timestamp": "2025-04-10 09:00:00", "ref_identifies": 5, "desc": "Spread calculation function" },
+        { "name": "fn-filter-qty", "path": "/functions/filter-qty", "timestamp": "2025-04-10 09:30:00", "ref_identifies": 3, "desc": "Quantity filter function" }
       ]
+    }
+  },
+  "/apik/prod1/function/fn-calc-spread": {
+    "okay": true, "msg": "Success",
+    "data": {
+      "function": {
+        "name": "fn-calc-spread", "path": "/functions/calc-spread", "timestamp": "2025-04-10 09:00:00",
+        "ref_identifies": 5, "desc": "Spread calculation function"
+      },
+      "related_identifies": [
+        { "name": "KR5701000055", "ref_count": 12, "url": "/identify/KR5701000055" },
+        { "name": "KR7005930003", "ref_count": 45, "url": "/identify/KR7005930003" },
+        { "name": "KR7000660001", "ref_count": 3, "url": "/identify/KR7000660001" }
+      ],
+      "definition": "# fn-calc-spread: Spread Calculation\n\nfunction calcSpread(ctx)\n  local bid = ctx:getBestBid()\n  local ask = ctx:getBestAsk()\n\n  if bid <= 0 or ask <= 0 then\n    return nil, \"Invalid quote\"\n  end\n\n  local spread = ask - bid\n  local mid = (ask + bid) / 2\n  local bps = (spread / mid) * 10000\n\n  ctx:setResult({\n    spread    = spread,\n    mid_price = mid,\n    bps       = bps,\n    timestamp = ctx:now()\n  })\n\n  return true\nend"
+    }
+  },
+  "/apik/prod1/function/fn-filter-qty": {
+    "okay": true, "msg": "Success",
+    "data": {
+      "function": {
+        "name": "fn-filter-qty", "path": "/functions/filter-qty", "timestamp": "2025-04-10 09:30:00",
+        "ref_identifies": 3, "desc": "Quantity filter function"
+      },
+      "related_identifies": [
+        { "name": "KR7005930003", "ref_count": 20, "url": "/identify/KR7005930003" },
+        { "name": "KR7035720002", "ref_count": 8, "url": "/identify/KR7035720002" }
+      ],
+      "definition": "# fn-filter-qty: Quantity Filter\n\nfunction filterQty(ctx)\n  local qty = ctx:getOrderQty()\n  local limit = ctx:getConfig(\"max_qty\") or 100000\n\n  if qty > limit then\n    ctx:log(\"WARN\", \"Qty exceeds limit: \" .. qty)\n    return false\n  end\n\n  return true\nend"
     }
   },
   "/apik/prod1/auditlog/list": {

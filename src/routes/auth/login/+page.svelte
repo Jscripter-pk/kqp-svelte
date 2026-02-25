@@ -2,6 +2,7 @@
   import { goto } from '$app/navigation';
   import { auth } from '$lib/stores/auth';
   import { fetcher, endpoints } from '$lib/api';
+  import { t } from '$lib/i18n';
   import { onMount } from 'svelte';
 
   let userId = '';
@@ -14,7 +15,7 @@
   });
 
   async function handleLogin() {
-    if (!userId || !password) { error = 'Please enter ID and password'; return; }
+    if (!userId || !password) { error = $t.login.errorEmpty; return; }
     loading = true; error = '';
     try {
       await fetcher(endpoints.auth.login, {
@@ -27,7 +28,7 @@
       auth.login(userId);
       goto('/dashboard');
     } catch (e) {
-      error = 'Login failed. Please check your credentials.';
+      error = $t.login.errorFailed;
     } finally {
       loading = false;
     }
@@ -54,7 +55,7 @@
         </svg>
       </div>
       <h1>KQP Admin</h1>
-      <p>Sign in to your account</p>
+      <p>{$t.login.signIn}</p>
     </div>
 
     <div class="login-form">
@@ -63,11 +64,11 @@
       {/if}
 
       <div class="form-group">
-        <label for="userId">User ID</label>
+        <label for="userId">{$t.login.userId}</label>
         <input
           id="userId"
           type="text"
-          placeholder="Enter your ID"
+          placeholder={$t.login.userIdPlaceholder}
           bind:value={userId}
           on:keydown={handleKeydown}
           disabled={loading}
@@ -75,11 +76,11 @@
       </div>
 
       <div class="form-group">
-        <label for="password">Password</label>
+        <label for="password">{$t.login.password}</label>
         <input
           id="password"
           type="password"
-          placeholder="Enter your password"
+          placeholder={$t.login.passwordPlaceholder}
           bind:value={password}
           on:keydown={handleKeydown}
           disabled={loading}
@@ -88,13 +89,13 @@
 
       <button class="login-btn" on:click={handleLogin} disabled={loading}>
         {#if loading}
-          <span class="loading-spinner"></span> Signing in...
+          <span class="loading-spinner"></span> {$t.login.signingIn}
         {:else}
-          Sign In
+          {$t.login.signInBtn}
         {/if}
       </button>
 
-      <p class="hint">Demo: any ID + any password (dummy mode)</p>
+      <p class="hint">{$t.login.hint}</p>
     </div>
   </div>
 </div>

@@ -1,28 +1,30 @@
 <script lang="ts">
   import Breadcrumb from '$lib/components/common/Breadcrumb.svelte';
   import { theme } from '$lib/stores/theme';
+  import { locale } from '$lib/stores/locale';
+  import { t } from '$lib/i18n';
 
   $: isDark = $theme === 'dark';
 </script>
 
-<Breadcrumb pages={[{ pageName: 'Settings' }]} />
-<h1 class="page-title">Settings</h1>
+<Breadcrumb pages={[{ pageName: $t.settings.title }]} />
+<h1 class="page-title">{$t.settings.title}</h1>
 
 <div class="settings-grid">
   <div class="card">
-    <h3 class="section-title">Display</h3>
+    <h3 class="section-title">{$t.settings.display}</h3>
 
     <div class="setting-row">
       <div>
-        <div class="setting-label">Theme</div>
-        <div class="setting-desc">Switch between dark and light mode</div>
+        <div class="setting-label">{$t.settings.theme}</div>
+        <div class="setting-desc">{$t.settings.themeDesc}</div>
       </div>
       <div class="theme-toggle">
         <button class:active={isDark} on:click={() => theme.set('dark')}>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
           </svg>
-          Dark
+          {$t.settings.dark}
         </button>
         <button class:active={!isDark} on:click={() => theme.set('light')}>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -30,20 +32,35 @@
             <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
             <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
           </svg>
-          Light
+          {$t.settings.light}
+        </button>
+      </div>
+    </div>
+
+    <div class="setting-row" style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border-color-light);">
+      <div>
+        <div class="setting-label">{$t.settings.language}</div>
+        <div class="setting-desc">{$t.settings.languageDesc}</div>
+      </div>
+      <div class="theme-toggle">
+        <button class:active={$locale === 'en'} on:click={() => locale.set('en')}>
+          {$t.settings.english}
+        </button>
+        <button class:active={$locale === 'ko'} on:click={() => locale.set('ko')}>
+          {$t.settings.korean}
         </button>
       </div>
     </div>
   </div>
 
   <div class="card">
-    <h3 class="section-title">About</h3>
-    <div class="info-row"><span>Application</span><span>KQP Admin</span></div>
-    <div class="info-row"><span>Version</span><span>1.0.0</span></div>
-    <div class="info-row"><span>Framework</span><span>SvelteKit</span></div>
-    <div class="info-row"><span>API Mode</span>
+    <h3 class="section-title">{$t.settings.about}</h3>
+    <div class="info-row"><span>{$t.settings.application}</span><span>KQP Admin</span></div>
+    <div class="info-row"><span>{$t.settings.version}</span><span>1.0.0</span></div>
+    <div class="info-row"><span>{$t.settings.framework}</span><span>SvelteKit</span></div>
+    <div class="info-row"><span>{$t.settings.apiMode}</span>
       <span class="chip {import.meta.env.PUBLIC_API_DATA_TYPE === 'dummy' ? 'online' : 'offline'}">
-        {import.meta.env.PUBLIC_API_DATA_TYPE === 'dummy' ? 'Demo Mode' : 'Live'}
+        {import.meta.env.PUBLIC_API_DATA_TYPE === 'dummy' ? $t.settings.demoMode : $t.settings.live}
       </span>
     </div>
   </div>

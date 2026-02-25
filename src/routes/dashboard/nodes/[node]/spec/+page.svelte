@@ -3,6 +3,7 @@
   import { goto } from "$app/navigation";
   import { fetcher, endpoints } from "$lib/api";
   import Breadcrumb from "$lib/components/common/Breadcrumb.svelte";
+  import { t } from "$lib/i18n";
 
   $: nodeId = $page.params.node;
   let items: any[] = [];
@@ -22,8 +23,8 @@
   $: nodeId, loadData();
 </script>
 
-<Breadcrumb node={nodeId} pages={[{ pageName: "SPEC List" }]} />
-<h1 class="page-title">SPEC List</h1>
+<Breadcrumb node={nodeId} pages={[{ pageName: $t.spec.title }]} />
+<h1 class="page-title">{$t.spec.title}</h1>
 
 <div class="card" style="padding:0;overflow:auto;">
   {#if loading}
@@ -32,21 +33,21 @@
     </div>
   {:else if items.length === 0}
     <div style="padding:40px;text-align:center;color:var(--text-muted)">
-      No specs found
+      {$t.spec.noData}
     </div>
   {:else}
     <table>
       <thead
         ><tr>
           <th></th>
-          <th style="text-align:right">ID</th>
-          <th>SPEC Name</th>
-          <th>Path</th>
-          <th>Timestamp</th>
-          <th>Ref. Identifier</th>
-          <th>Frags</th>
-          <th>Size</th>
-          <th>Description</th>
+          <th style="text-align:right">{$t.common.id}</th>
+          <th>{$t.spec.specName}</th>
+          <th>{$t.common.path}</th>
+          <th>{$t.common.timestamp}</th>
+          <th>{$t.spec.refIdentifier}</th>
+          <th>{$t.spec.frags}</th>
+          <th>{$t.common.size}</th>
+          <th>{$t.common.description}</th>
           <th></th>
         </tr></thead
       >

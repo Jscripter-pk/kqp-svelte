@@ -4,6 +4,7 @@
   import { onMount, onDestroy } from "svelte";
   import { fetcher, endpoints } from "$lib/api";
   import Breadcrumb from "$lib/components/common/Breadcrumb.svelte";
+  import { t } from "$lib/i18n";
 
   $: nodeId = $page.params.node;
   $: identName = decodeURIComponent($page.params.name);
@@ -19,9 +20,7 @@
     loading = true;
     error = "";
     try {
-      const res = (await fetcher(
-        endpoints.identify.detail(nodeId, identName),
-      )) as any;
+      const res = (await fetcher(endpoints.identify.detail(nodeId, identName))) as any;
       detail = res?.data?.item ?? {};
       keys = Array.isArray(detail.keys) ? detail.keys : [];
       specList = detail.related_specs ?? [];
@@ -134,7 +133,6 @@
   }
 
   onMount(() => {
-    // Delay to ensure canvas is in the DOM
     setTimeout(initBarChart, 100);
   });
   onDestroy(() => {
@@ -145,33 +143,30 @@
 <Breadcrumb
   node={nodeId}
   pages={[
-    {
-      pageName: "Identifier List",
-      link: `/dashboard/nodes/${nodeId}/identify`,
-    },
+    { pageName: $t.identify.title, link: `/dashboard/nodes/${nodeId}/identify` },
     { pageName: detail.name ?? identName },
   ]}
 />
 
-<h1 class="page-title">IDENTIFIER: {detail.name ?? identName}</h1>
+<h1 class="page-title">{$t.identify.detailTitle}{detail.name ?? identName}</h1>
 
 <!-- Top: Summary Table -->
 <div class="card summary-card">
   {#if loading}
     <div class="center-pad"><span class="loading-spinner"></span></div>
   {:else if error}
-    <div class="center-pad error-text">Error Fetching Identifier</div>
+    <div class="center-pad error-text">{$t.identify.errorFetching}</div>
   {:else}
     <table>
       <thead>
         <tr>
           <th></th>
-          <th>Identifier Name</th>
-          <th>Path</th>
-          <th>Timestamp</th>
-          <th>Ref. SPECs</th>
+          <th>{$t.identify.identifierName}</th>
+          <th>{$t.common.path}</th>
+          <th>{$t.common.timestamp}</th>
+          <th>{$t.identify.refSpecs}</th>
           <th></th><th></th><th></th><th></th>
-          <th>Description</th>
+          <th>{$t.common.description}</th>
           <th></th>
         </tr>
       </thead>
@@ -198,12 +193,12 @@
     <div class="left-col">
       <!-- Key Box -->
       <div class="key-box">
-        <div class="key-header">Key</div>
+        <div class="key-header">{$t.identify.keys}</div>
         <div class="key-body">
           {#if keys.length > 0}
             '{keys.join("', '")}'
           {:else}
-            No keys
+            {$t.identify.noKeys}
           {/if}
         </div>
       </div>
@@ -213,24 +208,21 @@
         <table>
           <thead>
             <tr>
-              <th style="text-align:right">No</th>
-              <th>Related SPEC</th>
-              <th>Ref. Frequency</th>
+              <th style="text-align:right">{$t.common.id}</th>
+              <th>{$t.identify.relatedSpec}</th>
+              <th>{$t.identify.refFrequency}</th>
               <th></th>
             </tr>
           </thead>
           <tbody>
             {#if specList.length === 0}
-              <tr><td colspan="4" class="empty-cell">No identities</td></tr>
+              <tr><td colspan="4" class="empty-cell">{$t.identify.noIdentities}</td></tr>
             {:else}
               {#each specList as spec, i}
                 <tr>
                   <td style="text-align:right">{i + 1}</td>
                   <td>
-                    <button
-                      class="spec-link"
-                      on:click={() => navigateToSpec(spec.url)}
-                    >
+                    <button class="spec-link" on:click={() => navigateToSpec(spec.url)}>
                       {spec.name}
                     </button>
                   </td>
@@ -245,7 +237,7 @@
 
       <!-- Bar Chart -->
       <div class="chart-card">
-        <div class="chart-label">Today Count</div>
+        <div class="chart-label">{$t.identify.todayCount}</div>
         <div class="chart-area">
           <canvas bind:this={barCanvas}></canvas>
         </div>
@@ -255,12 +247,12 @@
     <!-- RIGHT (5/12): Identifier Definition -->
     <div class="right-col">
       <div class="def-panel">
-        <div class="def-header">Identifier Definition</div>
+        <div class="def-header">{$t.identify.identifierDef}</div>
         <div class="def-body">
           {#if script}
             <pre class="def-code">{@html highlightSyntax(script)}</pre>
           {:else}
-            <pre class="def-code muted-text">No definition available</pre>
+            <pre class="def-code muted-text">{$t.identify.noDef}</pre>
           {/if}
         </div>
       </div>

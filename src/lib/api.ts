@@ -1,6 +1,6 @@
 import { getMockData } from '$lib/mockData';
 
-const SERVER_URL = import.meta.env.PUBLIC_SERVER_URL ?? 'https://141.164.63.141';
+const SERVER_URL = import.meta.env.PUBLIC_SERVER_URL ?? 'http://141.164.63.141';
 const API_DATA_TYPE = import.meta.env.PUBLIC_API_DATA_TYPE ?? 'real';
 
 console.log(`API Data Type: ${API_DATA_TYPE}, Server URL: ${SERVER_URL}`);

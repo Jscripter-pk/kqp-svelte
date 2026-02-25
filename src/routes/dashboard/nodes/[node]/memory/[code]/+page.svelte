@@ -2,6 +2,7 @@
     import { page } from "$app/stores";
     import { fetcher, endpoints } from "$lib/api";
     import Breadcrumb from "$lib/components/common/Breadcrumb.svelte";
+    import { t } from "$lib/i18n";
 
     $: nodeId = $page.params.node;
     $: code = $page.params.code;
@@ -73,7 +74,7 @@
 <Breadcrumb
     node={nodeId}
     pages={[
-        { pageName: "Memory", link: `/dashboard/nodes/${nodeId}/memory` },
+        { pageName: $t.memory.title, link: `/dashboard/nodes/${nodeId}/memory` },
         { pageName: issueInfo.name || code },
     ]}
 />
@@ -90,7 +91,7 @@
                     fill="currentColor"
                 /></svg
             >
-            Refresh
+            {$t.common.refresh}
         </button>
     {/if}
 </div>
