@@ -1,32 +1,36 @@
 <script lang="ts">
-  import { goto } from '$app/navigation';
-  import { auth } from '$lib/stores/auth';
-  import { fetcher, endpoints } from '$lib/api';
-  import { t } from '$lib/i18n';
-  import { onMount } from 'svelte';
+  import { goto } from "$app/navigation";
+  import { auth } from "$lib/stores/auth";
+  import { fetcher, endpoints } from "$lib/api";
+  import { t } from "$lib/i18n";
+  import { onMount } from "svelte";
 
-  let userId = '';
-  let password = '';
-  let error = '';
+  let userId = "manthika";
+  let password = "graduated";
+  let error = "";
   let loading = false;
 
   onMount(() => {
-    if ($auth) goto('/dashboard');
+    if ($auth) goto("/dashboard");
   });
 
   async function handleLogin() {
-    if (!userId || !password) { error = $t.login.errorEmpty; return; }
-    loading = true; error = '';
+    if (!userId || !password) {
+      error = $t.login.errorEmpty;
+      return;
+    }
+    loading = true;
+    error = "";
     try {
       await fetcher(endpoints.auth.login, {
-  method: 'POST',
-  body: {
-    id: userId,
-    password
-  }
-});
+        method: "POST",
+        body: {
+          id: userId,
+          password,
+        },
+      });
       auth.login(userId);
-      goto('/dashboard');
+      goto("/dashboard");
     } catch (e) {
       error = $t.login.errorFailed;
     } finally {
@@ -35,7 +39,7 @@
   }
 
   function handleKeydown(e: KeyboardEvent) {
-    if (e.key === 'Enter') handleLogin();
+    if (e.key === "Enter") handleLogin();
   }
 </script>
 
@@ -49,9 +53,13 @@
     <div class="login-header">
       <div class="logo">
         <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
-          <rect width="40" height="40" rx="10" fill="#4A3BFF"/>
-          <path d="M10 20L20 10L30 20L20 30L10 20Z" fill="white" opacity="0.9"/>
-          <path d="M16 20L20 16L24 20L20 24L16 20Z" fill="#4A3BFF"/>
+          <rect width="40" height="40" rx="10" fill="#4A3BFF" />
+          <path
+            d="M10 20L20 10L30 20L20 30L10 20Z"
+            fill="white"
+            opacity="0.9"
+          />
+          <path d="M16 20L20 16L24 20L20 24L16 20Z" fill="#4A3BFF" />
         </svg>
       </div>
       <h1>KQP Admin</h1>
@@ -112,16 +120,33 @@
   }
 
   .login-bg {
-    position: absolute; inset: 0; pointer-events: none;
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
   }
 
   .shape {
-    position: absolute; border-radius: 50%;
-    background: radial-gradient(circle, rgba(74,59,255,0.15), transparent 70%);
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(
+      circle,
+      rgba(74, 59, 255, 0.15),
+      transparent 70%
+    );
   }
 
-  .shape-1 { width: 600px; height: 600px; top: -200px; left: -200px; }
-  .shape-2 { width: 500px; height: 500px; bottom: -150px; right: -150px; }
+  .shape-1 {
+    width: 600px;
+    height: 600px;
+    top: -200px;
+    left: -200px;
+  }
+  .shape-2 {
+    width: 500px;
+    height: 500px;
+    bottom: -150px;
+    right: -150px;
+  }
 
   .login-box {
     background: var(--bg-card);
@@ -157,9 +182,17 @@
     font-size: 14px;
   }
 
-  .login-form { display: flex; flex-direction: column; gap: 16px; }
+  .login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
 
-  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
 
   label {
     font-size: 13px;
@@ -184,16 +217,24 @@
     font-size: 15px;
     font-weight: 600;
     margin-top: 8px;
-    display: flex; align-items: center; justify-content: center; gap: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
     transition: background 0.2s;
   }
 
-  .login-btn:hover:not(:disabled) { background: #3D2FCC; }
-  .login-btn:disabled { opacity: 0.7; cursor: not-allowed; }
+  .login-btn:hover:not(:disabled) {
+    background: #3d2fcc;
+  }
+  .login-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
 
   .error-msg {
-    background: rgba(255,86,48,0.1);
-    border: 1px solid rgba(255,86,48,0.3);
+    background: rgba(255, 86, 48, 0.1);
+    border: 1px solid rgba(255, 86, 48, 0.3);
     border-radius: 8px;
     padding: 10px 14px;
     color: var(--error);
@@ -208,9 +249,10 @@
   }
 
   .loading-spinner {
-    width: 16px; height: 16px;
+    width: 16px;
+    height: 16px;
     border-width: 2px;
-    border-color: rgba(255,255,255,0.3);
+    border-color: rgba(255, 255, 255, 0.3);
     border-top-color: white;
   }
 </style>
