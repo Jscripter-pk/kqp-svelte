@@ -115,8 +115,14 @@
                 <button class="nav-item nav-node"
                   class:active={activeNode === node.id}
                   on:click={() => {
-                    expandedNodeId = expandedNodeId === node.id ? null : node.id;
-                    goto(`/dashboard/nodes/${node.id}/node-dashboard`);
+                    if (activeNode !== node.id) {
+                      // Switching to a different node — expand and navigate
+                      expandedNodeId = node.id;
+                      goto(`/dashboard/nodes/${node.id}/node-dashboard`);
+                    } else {
+                      // Same node — just toggle the submenu, no navigation
+                      expandedNodeId = expandedNodeId === node.id ? null : node.id;
+                    }
                   }}>
                   <span class="dot {node.online_status ? 'online' : 'offline'}"></span>
                   <span>{node.id}</span>
@@ -200,9 +206,7 @@
 
     <!-- Page Content -->
     <main class="content">
-      {#key $page.url.pathname}
-        <slot />
-      {/key}
+      <slot />
     </main>
   </div>
 </div>

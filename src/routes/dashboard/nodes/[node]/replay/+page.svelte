@@ -662,14 +662,11 @@
     font-weight: 500;
     font-size: 12px;
     text-transform: uppercase;
-    color: #667085;
     border-bottom: 1px solid #2E3649;
   }
   .dark-table tbody td { padding: 8px 12px; border: none; }
   .process-row { cursor: pointer; transition: background 0.15s; }
   .process-row:hover { background: rgba(255,255,255,0.06) !important; }
-  .row-even { background: #202838; }
-  .row-odd { background: #141C2A; }
   .text-muted-cell { color: #D1D6E0; font-size: 15px; }
   .command-cell { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px; }
   .empty-cell { text-align: center; padding: 20px; color: #D1D6E0; }
