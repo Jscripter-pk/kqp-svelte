@@ -3,6 +3,7 @@
   import { goto } from "$app/navigation";
   import { fetcher, endpoints } from "$lib/api";
   import Breadcrumb from "$lib/components/common/Breadcrumb.svelte";
+  import { t } from "$lib/i18n";
 
   $: nodeId = $page.params.node;
   $: ruleName = decodeURIComponent($page.params.name);
@@ -60,34 +61,34 @@
 <Breadcrumb
   node={nodeId}
   pages={[
-    { pageName: "Rule List", link: `/dashboard/nodes/${nodeId}/rules` },
+    { pageName: $t.rules.title, link: `/dashboard/nodes/${nodeId}/rules` },
     { pageName: ruleName },
   ]}
 />
 
-<h1 class="page-title">RULE: {ruleName}</h1>
+<h1 class="page-title">{$t.rules.detailTitle}{ruleName}</h1>
 
 <!-- Top: Summary Table -->
 <div class="card summary-card">
   {#if loading}
     <div class="center-pad"><span class="loading-spinner"></span></div>
   {:else if error}
-    <div class="center-pad error-text">Error Fetching Rule</div>
+    <div class="center-pad error-text">{$t.rules.errorFetching}</div>
   {:else if !detail.name}
-    <div class="center-pad muted-text">No Action Rule</div>
+    <div class="center-pad muted-text">{$t.rules.noActionRule}</div>
   {:else}
     <table>
       <thead>
         <tr>
           <th></th>
-          <th>Rule Name</th>
-          <th>Path</th>
-          <th>Timestamp</th>
-          <th>Ref. Layout</th>
-          <th>Ref. Process</th>
-          <th>Ref. Actions</th>
+          <th>{$t.rules.ruleName}</th>
+          <th>{$t.common.path}</th>
+          <th>{$t.common.timestamp}</th>
+          <th>{$t.rules.refLayout}</th>
+          <th>{$t.common.refProcess}</th>
+          <th>{$t.rules.refActions}</th>
           <th></th>
-          <th>Description</th>
+          <th>{$t.common.description}</th>
           <th></th>
         </tr>
       </thead>
@@ -125,14 +126,14 @@
             <tr>
               <th></th>
               <th style="text-align:right">No</th>
-              <th>Related Layout</th>
-              <th>Ref. Frequency</th>
+              <th>{$t.rules.relatedLayout}</th>
+              <th>{$t.rules.refFrequency}</th>
               <th></th>
             </tr>
           </thead>
           <tbody>
             {#if layoutList.length === 0}
-              <tr><td colspan="5" class="empty-cell">No actions found</td></tr>
+              <tr><td colspan="5" class="empty-cell">{$t.rules.noData}</td></tr>
             {:else}
               {#each layoutList as item, i}
                 <tr>
@@ -161,14 +162,14 @@
             <tr>
               <th></th>
               <th style="text-align:right">No</th>
-              <th>Related Process</th>
-              <th>Usage Frequency</th>
+              <th>{$t.rules.relatedProcess}</th>
+              <th>{$t.rules.usageFrequency}</th>
               <th></th>
             </tr>
           </thead>
           <tbody>
             {#if processList.length === 0}
-              <tr><td colspan="5" class="empty-cell">No actions found</td></tr>
+              <tr><td colspan="5" class="empty-cell">{$t.rules.noData}</td></tr>
             {:else}
               {#each processList as item, i}
                 <tr>
@@ -197,14 +198,14 @@
             <tr>
               <th></th>
               <th style="text-align:right">No</th>
-              <th>Related Actions</th>
-              <th>Usage Frequency</th>
+              <th>{$t.rules.relatedActions}</th>
+              <th>{$t.rules.usageFrequency}</th>
               <th></th>
             </tr>
           </thead>
           <tbody>
             {#if actionList.length === 0}
-              <tr><td colspan="5" class="empty-cell">No actions found</td></tr>
+              <tr><td colspan="5" class="empty-cell">{$t.rules.noData}</td></tr>
             {:else}
               {#each actionList as item, i}
                 <tr>
@@ -230,13 +231,13 @@
     <!-- RIGHT (5/12): Rule Definition -->
     <div class="right-col">
       <div class="def-panel">
-        <div class="def-header">Rule Definition</div>
+        <div class="def-header">{$t.rules.definition}</div>
         <div class="def-body">
           {#if script}
             <pre class="def-code">{@html highlightSyntax(script)}</pre>
           {:else}
             <pre
-              class="def-code muted-text">Action details will appear here.</pre>
+              class="def-code muted-text">{$t.rules.noDefinition}</pre>
           {/if}
         </div>
       </div>

@@ -3,6 +3,7 @@
   import { goto } from "$app/navigation";
   import { fetcher, endpoints } from "$lib/api";
   import Breadcrumb from "$lib/components/common/Breadcrumb.svelte";
+  import { t } from "$lib/i18n";
 
   $: nodeId = $page.params.node;
   $: actionName = decodeURIComponent($page.params.name);
@@ -67,7 +68,7 @@
 <Breadcrumb
   node={nodeId}
   pages={[
-    { pageName: "Action List", link: `/dashboard/nodes/${nodeId}/action` },
+    { pageName: $t.action.title, link: `/dashboard/nodes/${nodeId}/action` },
     { pageName: actionName },
   ]}
 />
@@ -79,22 +80,22 @@
   {#if loading}
     <div class="center-pad"><span class="loading-spinner"></span></div>
   {:else if error}
-    <div class="center-pad error-text">Error Fetching Action</div>
+    <div class="center-pad error-text">{$t.action.errorFetching}</div>
   {:else if !actionItem.name}
-    <div class="center-pad muted-text">No Process Found</div>
+    <div class="center-pad muted-text">{$t.action.notFound}</div>
   {:else}
     <table>
       <thead>
         <tr>
           <th></th>
-          <th>Action Name</th>
-          <th>Path</th>
-          <th>Timestamp</th>
-          <th>Ref. Layout</th>
-          <th>Ref. Process</th>
+          <th>{$t.action.actionName}</th>
+          <th>{$t.common.path}</th>
+          <th>{$t.common.timestamp}</th>
+          <th>{$t.action.refLayout}</th>
+          <th>{$t.common.refProcess}</th>
           <th></th>
           <th></th>
-          <th>Description</th>
+          <th>{$t.common.description}</th>
           <th></th>
         </tr>
       </thead>
@@ -128,14 +129,14 @@
             <tr>
               <th></th>
               <th style="text-align:right">No</th>
-              <th>Related Layout</th>
-              <th>Ref. Frequency</th>
+              <th>{$t.action.relatedLayout}</th>
+              <th>{$t.action.refFrequency}</th>
               <th></th>
             </tr>
           </thead>
           <tbody>
             {#if layoutList.length === 0}
-              <tr><td colspan="5" class="empty-cell">No actions found</td></tr>
+              <tr><td colspan="5" class="empty-cell">{$t.action.noData}</td></tr>
             {:else}
               {#each layoutList as item, i}
                 <tr>
@@ -164,14 +165,14 @@
             <tr>
               <th></th>
               <th style="text-align:right">No</th>
-              <th>Related Process</th>
-              <th>Usage Frequency</th>
+              <th>{$t.action.relatedProcess}</th>
+              <th>{$t.action.usageFrequency}</th>
               <th></th>
             </tr>
           </thead>
           <tbody>
             {#if processList.length === 0}
-              <tr><td colspan="5" class="empty-cell">No actions found</td></tr>
+              <tr><td colspan="5" class="empty-cell">{$t.action.noData}</td></tr>
             {:else}
               {#each processList as item, i}
                 <tr>
@@ -197,13 +198,13 @@
     <!-- RIGHT (5/12): Action Definition -->
     <div class="right-col">
       <div class="def-panel">
-        <div class="def-header">Action Definition</div>
+        <div class="def-header">{$t.action.definition}</div>
         <div class="def-body">
           {#if script}
             <pre class="def-code">{@html highlightSyntax(script)}</pre>
           {:else}
             <pre
-              class="def-code muted-text">Action details will appear here.</pre>
+              class="def-code muted-text">{$t.action.noDefinition}</pre>
           {/if}
         </div>
       </div>

@@ -2,6 +2,7 @@
   import { page } from "$app/stores";
   import { fetcher, endpoints } from "$lib/api";
   import Breadcrumb from "$lib/components/common/Breadcrumb.svelte";
+  import { t } from "$lib/i18n";
 
   $: nodeId = $page.params.node;
   $: layoutName = decodeURIComponent($page.params.name);
@@ -47,34 +48,34 @@
 <Breadcrumb
   node={nodeId}
   pages={[
-    { pageName: "Layout List", link: `/dashboard/nodes/${nodeId}/layout` },
+    { pageName: $t.layout.title, link: `/dashboard/nodes/${nodeId}/layout` },
     { pageName: layoutName },
   ]}
 />
 
-<h1 class="page-title">Layout : {layoutName}</h1>
+<h1 class="page-title">{$t.layout.detailTitle}{layoutName}</h1>
 
 <!-- Top: Summary Table -->
 <div class="card summary-card">
   {#if loading}
     <div class="center-pad"><span class="loading-spinner"></span></div>
   {:else if error}
-    <div class="center-pad error-text">Error Fetching Layout</div>
+    <div class="center-pad error-text">{$t.layout.errorFetching}</div>
   {:else if !detail.name}
-    <div class="center-pad muted-text">No Process Found</div>
+    <div class="center-pad muted-text">{$t.layout.notFound}</div>
   {:else}
     <table>
       <thead>
         <tr>
           <th></th>
-          <th>Layout Name</th>
-          <th>Path</th>
-          <th>Timestamp</th>
-          <th>Process</th>
-          <th>Channel.IN</th>
+          <th>{$t.layout.layoutName}</th>
+          <th>{$t.common.path}</th>
+          <th>{$t.common.timestamp}</th>
+          <th>{$t.layout.process}</th>
+          <th>{$t.layout.channelIn}</th>
           <th></th>
           <th></th>
-          <th>Description</th>
+          <th>{$t.common.description}</th>
           <th></th>
         </tr>
       </thead>
@@ -99,12 +100,12 @@
 <!-- Layout Definition (full width) -->
 {#if !loading && !error}
   <div class="def-panel">
-    <div class="def-header">Layout Definition</div>
+    <div class="def-header">{$t.layout.definition}</div>
     <div class="def-body">
       {#if layoutDef}
         <pre class="def-code">{@html highlightSyntax(layoutDef)}</pre>
       {:else}
-        <pre class="def-code muted-text">No layout definition available.</pre>
+        <pre class="def-code muted-text">{$t.layout.noDefinition}</pre>
       {/if}
     </div>
   </div>

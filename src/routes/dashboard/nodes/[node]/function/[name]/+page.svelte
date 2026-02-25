@@ -3,6 +3,7 @@
   import { goto } from "$app/navigation";
   import { fetcher, endpoints } from "$lib/api";
   import Breadcrumb from "$lib/components/common/Breadcrumb.svelte";
+  import { t } from "$lib/i18n";
 
   $: nodeId = $page.params.node;
   $: funcName = decodeURIComponent($page.params.name);
@@ -60,32 +61,32 @@
 <Breadcrumb
   node={nodeId}
   pages={[
-    { pageName: "Function List", link: `/dashboard/nodes/${nodeId}/function` },
+    { pageName: $t.func.title, link: `/dashboard/nodes/${nodeId}/function` },
     { pageName: funcInfo.name ?? funcName },
   ]}
 />
 
-<h1 class="page-title">FUNCTION: {funcInfo.name ?? funcName}</h1>
+<h1 class="page-title">{$t.func.detailTitle}{funcInfo.name ?? funcName}</h1>
 
 <!-- Top: Summary Table -->
 <div class="card summary-card">
   {#if loading}
     <div class="center-pad"><span class="loading-spinner"></span></div>
   {:else if error}
-    <div class="center-pad error-text">Error Fetching Function</div>
+    <div class="center-pad error-text">{$t.func.errorFetching}</div>
   {:else}
     <table>
       <thead>
         <tr>
           <th></th>
-          <th>Function Name</th>
-          <th>Path</th>
-          <th>Timestamp</th>
-          <th>Ref. Identifier</th>
+          <th>{$t.func.functionName}</th>
+          <th>{$t.common.path}</th>
+          <th>{$t.common.timestamp}</th>
+          <th>{$t.func.refIdentifier}</th>
           <th></th>
           <th></th>
           <th></th>
-          <th>Description</th>
+          <th>{$t.common.description}</th>
           <th></th>
         </tr>
       </thead>
@@ -118,13 +119,13 @@
             <tr>
               <th></th>
               <th style="text-align:right">No</th>
-              <th>Related Identifier</th>
-              <th>Ref. Frequency</th>
+              <th>{$t.func.relatedIdentifier}</th>
+              <th>{$t.func.refFrequency}</th>
             </tr>
           </thead>
           <tbody>
             {#if identList.length === 0}
-              <tr><td colspan="4" class="empty-cell">No identities</td></tr>
+              <tr><td colspan="4" class="empty-cell">{$t.identify.noIdentities}</td></tr>
             {:else}
               {#each identList as item, i}
                 <tr>
@@ -149,12 +150,12 @@
     <!-- RIGHT (5/12): User Function Definition -->
     <div class="right-col">
       <div class="def-panel">
-        <div class="def-header">User Function Definition</div>
+        <div class="def-header">{$t.func.definition}</div>
         <div class="def-body">
           {#if script}
             <pre class="def-code">{@html highlightSyntax(script)}</pre>
           {:else}
-            <pre class="def-code muted-text">No definition available.</pre>
+            <pre class="def-code muted-text">{$t.func.noDefinition}</pre>
           {/if}
         </div>
       </div>

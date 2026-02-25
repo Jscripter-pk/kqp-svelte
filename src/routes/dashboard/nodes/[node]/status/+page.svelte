@@ -18,7 +18,11 @@
       const status = res?.data?.service_status;
 
       serviceSummary = status?.summary ?? null;
-      traffics = status?.traffics ?? { inbound: [], outbound: [] };
+      const raw = status?.traffics;
+      traffics = {
+        inbound: Array.isArray(raw?.inbound) ? raw.inbound : [],
+        outbound: Array.isArray(raw?.outbound) ? raw.outbound : [],
+      };
     } catch (e) {
       console.error(e);
     } finally {

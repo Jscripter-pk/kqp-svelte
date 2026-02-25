@@ -44,7 +44,7 @@
                 .filter((k) => k !== "sum")
                 .sort((a, b) => Number(a) - Number(b));
         } catch (e) {
-            console.error("Failed to load issue data:", e);
+            console.error($t.memory.errorLoading, e);
         }
         loading = false;
     }
@@ -58,10 +58,10 @@
 
     // Build the info table data
     $: infoTableRows = [
-        { label: "Last.Price", key: "last_price" },
-        { label: "Last.Vol", key: "last_vol" },
-        { label: "Vol.Accum", key: "vol_accum" },
-        { label: "Amt.Accum", key: "amt_accum" },
+        { label: $t.memory.lastPrice, key: "last_price" },
+        { label: $t.memory.lastVol, key: "last_vol" },
+        { label: $t.memory.volAccum, key: "vol_accum" },
+        { label: $t.memory.amtAccum, key: "amt_accum" },
     ];
 
     $: ohlRows = [
@@ -105,22 +105,22 @@
             <!-- Basic Info Card -->
             <div class="info-card">
                 <div class="info-field">
-                    <span class="info-lbl">Seq</span><span class="info-val"
+                    <span class="info-lbl">{$t.memory.seq}</span><span class="info-val"
                         >{issueInfo.seq ?? "-"}</span
                     >
                 </div>
                 <div class="info-field">
-                    <span class="info-lbl">Code</span><span class="info-val"
+                    <span class="info-lbl">{$t.memory.code}</span><span class="info-val"
                         >{issueInfo.code ?? "-"}</span
                     >
                 </div>
                 <div class="info-field">
-                    <span class="info-lbl">Name</span><span class="info-val"
+                    <span class="info-lbl">{$t.memory.name}</span><span class="info-val"
                         >{issueInfo.name ?? "-"}</span
                     >
                 </div>
                 <div class="info-field">
-                    <span class="info-lbl">G1.SSN-ID</span><span
+                    <span class="info-lbl">{$t.memory.g1SsnId}</span><span
                         class="info-val"
                         >{Array.isArray(issueInfo.g1_ssn_id)
                             ? `[${issueInfo.g1_ssn_id.join(" / ")}]`
@@ -128,7 +128,7 @@
                     >
                 </div>
                 <div class="info-field">
-                    <span class="info-lbl">Compet</span><span class="info-val"
+                    <span class="info-lbl">{$t.memory.compet}</span><span class="info-val"
                         >{issueInfo.compet ?? "-"}</span
                     >
                 </div>
@@ -168,7 +168,7 @@
                 <!-- Open -->
                 <div class="it-row it-even">
                     <div class="it-cell it-label-cell">
-                        <span class="ohl-icon ohl-open"></span> Open
+                        <span class="ohl-icon ohl-open"></span> {$t.memory.open}
                     </div>
                     <div class="it-cell it-val-cell">
                         {fmt(issueInfo.open?.uni)}
@@ -184,7 +184,7 @@
                 <!-- High -->
                 <div class="it-row it-odd">
                     <div class="it-cell it-label-cell">
-                        <span class="ohl-icon ohl-high">▲</span> High
+                        <span class="ohl-icon ohl-high">▲</span> {$t.memory.high}
                     </div>
                     <div class="it-cell it-val-cell">
                         <span class="high-val"
@@ -206,7 +206,7 @@
                 <!-- Low -->
                 <div class="it-row it-even">
                     <div class="it-cell it-label-cell">
-                        <span class="ohl-icon ohl-low">▼</span> Low
+                        <span class="ohl-icon ohl-low">▼</span> {$t.memory.low}
                     </div>
                     <div class="it-cell it-val-cell">
                         <span class="low-val">▼ {fmt(issueInfo.low?.uni)}</span>
@@ -228,7 +228,7 @@
                     <thead>
                         <tr>
                             <th style="text-align:right">No</th>
-                            <th style="text-align:right">Price</th>
+                            <th style="text-align:right">{$t.memory.price}</th>
                             <th style="text-align:right">UNI</th>
                             <th style="text-align:right">KRX</th>
                             <th style="text-align:right">NXT</th>
