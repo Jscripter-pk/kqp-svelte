@@ -22,16 +22,56 @@ export const mockData: Record<string, unknown> = {
         { "data": [{ "PARAM": "1", "PPID": "1", "MEM": "13116", "NAME": "beacon", "PID": "2865332", "CPU": "0.0", "COMMAND": "./beacon 1", "APPCODE": "beacon" }], "target": "beacon" },
         { "data": [{ "PARAM": "1", "PPID": "1", "MEM": "52864", "NAME": "sweeper", "PID": "2865333", "CPU": "0.0", "COMMAND": "./vapp -n sweeper 1", "APPCODE": "sweeper" }], "target": "sweeper" },
         { "data": {}, "target": "recv" },
-        { "data": [
-          { "PARAM": "dist", "PPID": "1", "MEM": "22240", "NAME": "subsequent", "PID": "2865334", "CPU": "0.4", "COMMAND": "./subsequent dist", "APPCODE": "subsequent" },
-          { "PARAM": "qos", "PPID": "1", "MEM": "16136", "NAME": "subsequent", "PID": "2865335", "CPU": "0.2", "COMMAND": "./subsequent qos", "APPCODE": "subsequent" }
-        ], "target": "subsequent" },
-        { "data": [
-          { "PARAM": "recovery", "PPID": "1", "MEM": "15348", "NAME": "kqp", "PID": "2210976", "CPU": "0.0", "COMMAND": "./kqp recovery", "APPCODE": "kqp" },
-          { "PARAM": "dp", "PPID": "1", "MEM": "36304", "NAME": "kqp", "PID": "2865337", "CPU": "0.0", "COMMAND": "./kqp dp", "APPCODE": "kqp" },
-          { "PARAM": "1", "PPID": "1", "MEM": "174412", "NAME": "kqp", "PID": "2865338", "CPU": "0.9", "COMMAND": "./kqp 1", "APPCODE": "kqp" }
-        ], "target": "kqp" }
+        {
+          "data": [
+            { "PARAM": "dist", "PPID": "1", "MEM": "22240", "NAME": "subsequent", "PID": "2865334", "CPU": "0.4", "COMMAND": "./subsequent dist", "APPCODE": "subsequent" },
+            { "PARAM": "qos", "PPID": "1", "MEM": "16136", "NAME": "subsequent", "PID": "2865335", "CPU": "0.2", "COMMAND": "./subsequent qos", "APPCODE": "subsequent" }
+          ], "target": "subsequent"
+        },
+        {
+          "data": [
+            { "PARAM": "recovery", "PPID": "1", "MEM": "15348", "NAME": "kqp", "PID": "2210976", "CPU": "0.0", "COMMAND": "./kqp recovery", "APPCODE": "kqp" },
+            { "PARAM": "dp", "PPID": "1", "MEM": "36304", "NAME": "kqp", "PID": "2865337", "CPU": "0.0", "COMMAND": "./kqp dp", "APPCODE": "kqp" },
+            { "PARAM": "1", "PPID": "1", "MEM": "174412", "NAME": "kqp", "PID": "2865338", "CPU": "0.9", "COMMAND": "./kqp 1", "APPCODE": "kqp" }
+          ], "target": "kqp"
+        }
       ]
+    }
+  },
+  "/apik/prod1/process/beacon": {
+    "okay": true, "msg": "Success",
+    "data": {
+      "item": {
+        "name": "beacon", "timestamp": "2025-04-10 16:15:00", "cpu": "0.0", "mem": "13116", "desc": "Beacon heartbeat process",
+        "layout_def": "# beacon process definition\n\n[process]\nname = beacon\ntype = daemon\nrestart = always\n\n[resource]\ncpu_limit = 10\nmem_limit = 64MB\n\n[schedule]\nstart_time = 00:00\nstop_time = 23:59\ninterval = 30s\n\n[health_check]\nendpoint = /health\ntimeout = 5s\nretries = 3"
+      }
+    }
+  },
+  "/apik/prod1/process/sweeper": {
+    "okay": true, "msg": "Success",
+    "data": {
+      "item": {
+        "name": "sweeper", "timestamp": "2025-04-10 16:15:00", "cpu": "0.0", "mem": "52864", "desc": "Data sweeper and cleanup process",
+        "layout_def": "# sweeper process definition\n\n[process]\nname = sweeper\ntype = daemon\nrestart = on-failure\n\n[resource]\ncpu_limit = 20\nmem_limit = 128MB\n\n[schedule]\nstart_time = 00:00\nstop_time = 23:59\ninterval = 60s"
+      }
+    }
+  },
+  "/apik/prod1/process/subsequent": {
+    "okay": true, "msg": "Success",
+    "data": {
+      "item": {
+        "name": "subsequent", "timestamp": "2025-04-10 16:15:00", "cpu": "0.4", "mem": "22240", "desc": "Subsequent event processing",
+        "layout_def": "# subsequent process definition\n\n[process]\nname = subsequent\ntype = worker\nrestart = always\ninstances = 2\n\n[params]\nmode = dist|qos\n\n[resource]\ncpu_limit = 30\nmem_limit = 256MB"
+      }
+    }
+  },
+  "/apik/prod1/process/kqp": {
+    "okay": true, "msg": "Success",
+    "data": {
+      "item": {
+        "name": "kqp", "timestamp": "2025-04-10 16:15:00", "cpu": "0.9", "mem": "174412", "desc": "KQP core processing engine",
+        "layout_def": "# kqp process definition\n\n[process]\nname = kqp\ntype = worker\nrestart = always\ninstances = 3\n\n[params]\nmode = recovery|dp|main\npriority = high\n\n[resource]\ncpu_limit = 80\nmem_limit = 512MB\n\n[network]\nlisten_port = 8080\nmax_connections = 1000\n\n[logging]\nlevel = info\nrotation = daily\nmax_files = 30"
+      }
     }
   },
   "/apik/prod1/service/status": {
@@ -173,6 +213,43 @@ export const mockData: Record<string, unknown> = {
 
 export function getMockData(url: string): unknown {
   const [baseUrl] = url.split('?');
+
+  // Handle replay info for any node
+  const replayInfoMatch = baseUrl.match(/^\/apik\/([^/]+)\/replay\/info$/);
+  if (replayInfoMatch) {
+    return {
+      okay: true,
+      msg: "Success",
+      data: {
+        replay_status: {
+          process_list: [
+            { pid: "12345", command: "./replay_tool --file=inbound_log --speed=1.0" },
+            { pid: "12346", command: "./replay_tool --file=outbound_log --speed=2.0" },
+          ]
+        },
+        replay_interface: {
+          log_type_list: [
+            { key: "inbound", label: "Inbound" },
+            { key: "outbound", label: "Outbound" },
+            { key: "other", label: "Other" },
+          ],
+          file_tree: {
+            inbound: {
+              "recv_log": ["20250101", "20250115", "20250201"],
+              "dist_log": ["20250110", "20250120"],
+            },
+            outbound: {
+              "send_log": ["20250105", "20250125"],
+            },
+            other: {
+              "misc_log": ["20250103"],
+            }
+          }
+        }
+      }
+    };
+  }
+
   if (url in mockData) return mockData[url];
   const matchedKey = Object.keys(mockData).find(key => key.split('?')[0] === baseUrl);
   if (matchedKey) return mockData[matchedKey];

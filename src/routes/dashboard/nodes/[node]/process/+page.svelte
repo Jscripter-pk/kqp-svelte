@@ -1,41 +1,51 @@
 <script lang="ts">
-  import { page } from '$app/stores';
-  import { onMount } from 'svelte';
-  import { fetcher, endpoints } from '$lib/api';
-  import Breadcrumb from '$lib/components/common/Breadcrumb.svelte';
+  import { page } from "$app/stores";
+  import { goto } from "$app/navigation";
+  import { onMount } from "svelte";
+  import { fetcher, endpoints } from "$lib/api";
+  import Breadcrumb from "$lib/components/common/Breadcrumb.svelte";
 
   $: nodeId = $page.params.node;
 
   let processes: any[] = [];
   let loading = true;
-  let error = '';
+  let error = "";
 
   async function loadData() {
-    loading = true; error = '';
+    loading = true;
+    error = "";
     try {
-      const res = await fetcher(endpoints.dashboard.processList(nodeId)) as any;
+      const res = (await fetcher(
+        endpoints.dashboard.processList(nodeId),
+      )) as any;
       const list = res?.data?.processList ?? [];
       processes = list
         .filter((p: any) => p.data && Object.keys(p.data).length > 0)
-        .map((p: any) => Array.isArray(p.data) ? p.data : [])
+        .map((p: any) => (Array.isArray(p.data) ? p.data : []))
         .flat();
-    } catch(e) { error = String(e); }
+    } catch (e) {
+      error = String(e);
+    }
     loading = false;
   }
 
   $: nodeId, loadData();
 </script>
 
-<Breadcrumb node={nodeId} pages={[{ pageName: 'Process' }]} />
+<Breadcrumb node={nodeId} pages={[{ pageName: "Process" }]} />
 <h1 class="page-title">Process</h1>
 
 <div class="card" style="padding: 0; overflow: auto;">
   {#if loading}
-    <div style="display:flex;justify-content:center;padding:40px"><span class="loading-spinner"></span></div>
+    <div style="display:flex;justify-content:center;padding:40px">
+      <span class="loading-spinner"></span>
+    </div>
   {:else if error}
     <div style="padding:20px;color:var(--error)">Error: {error}</div>
   {:else if processes.length === 0}
-    <div style="padding:40px;text-align:center;color:var(--text-muted)">No processes found</div>
+    <div style="padding:40px;text-align:center;color:var(--text-muted)">
+      No processes found
+    </div>
   {:else}
     <table>
       <thead>
@@ -50,12 +60,19 @@
       </thead>
       <tbody>
         {#each processes as proc}
-          <tr>
+          <tr
+            class="clickable"
+            on:click={() =>
+              goto(
+                `/dashboard/nodes/${nodeId}/process/${encodeURIComponent(proc.NAME)}`,
+              )}
+          >
             <td style="text-align:right">{proc.PID}</td>
             <td>{proc.NAME}</td>
             <td>{proc.PARAM}</td>
             <td style="text-align:right">{proc.CPU}</td>
-            <td style="text-align:right">{Number(proc.MEM).toLocaleString()}</td>
+            <td style="text-align:right">{Number(proc.MEM).toLocaleString()}</td
+            >
             <td style="text-align:right">{proc.PPID}</td>
             <td style="text-align:right">{proc.COMMAND}</td>
           </tr>

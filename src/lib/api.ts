@@ -59,6 +59,7 @@ export const endpoints = {
     serviceStatus: (node: string) => `/apik/${node}/service/status`,
     diskMetrics: (node: string) => `/apik/${node}/node/metrics/disk`,
     processList: (node: string) => `/apik/${node}/process/list`,
+    processDetail: (node: string, process: string) => `/apik/${node}/process/${process}`,
     graph: (node: string) => `/apik/${node}/node/metrics`,
     memoryMetrics: (node: string) => `/apik/${node}/node/metrics/memory`,
   },
