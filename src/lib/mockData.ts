@@ -161,18 +161,102 @@ export const mockData: Record<string, unknown> = {
     "okay": true, "msg": "Success",
     "data": {
       "list": [
-        { "name": "spec-001", "version": "1.0.0", "timestamp": "2025-04-10 09:00:00", "desc": "Market data spec" },
-        { "name": "spec-002", "version": "2.1.0", "timestamp": "2025-04-10 09:30:00", "desc": "Order spec" }
+        { "name": "spec-001", "path": "/data/spec/market", "timestamp": "2025-04-10 09:00:00", "ref_identifies": 5, "frags": 12, "size": 256, "desc": "Market data spec" },
+        { "name": "spec-002", "path": "/data/spec/order", "timestamp": "2025-04-10 09:30:00", "ref_identifies": 3, "frags": 8, "size": 128, "desc": "Order spec" }
       ]
+    }
+  },
+  "/apik/prod1/spec/spec-001": {
+    "okay": true, "msg": "Success",
+    "data": {
+      "detail": {
+        "name": "spec-001", "path": "/data/spec/market", "timestamp": "2025-04-10 09:00:00",
+        "ref_identifies": 5, "frags": 12, "size": 256, "desc": "Market data spec",
+        "related_identifies": [
+          { "name": "KR5701000055", "ref_count": 12, "url": "/identify/KR5701000055" },
+          { "name": "KR5701000063", "ref_count": 8, "url": "/identify/KR5701000063" },
+          { "name": "KR7005930003", "ref_count": 45, "url": "/identify/KR7005930003" },
+          { "name": "KR7000660001", "ref_count": 3, "url": "/identify/KR7000660001" },
+          { "name": "KR7035720002", "ref_count": 22, "url": "/identify/KR7035720002" }
+        ],
+        "spec_definition": [
+          { "order": 1, "offset": 0, "length": 2, "type": "string", "desc": "Data Type" },
+          { "order": 2, "offset": 2, "length": 12, "type": "string", "desc": "Issue Code" },
+          { "order": 3, "offset": 14, "length": 5, "type": "int", "desc": "Seq No" },
+          { "order": 4, "offset": 19, "length": 9, "type": "int", "desc": "Price" },
+          { "order": 5, "offset": 28, "length": 12, "type": "long", "desc": "Volume" },
+          { "order": 6, "offset": 40, "length": 8, "type": "string", "desc": "Time" },
+          { "order": 7, "offset": 48, "length": 1, "type": "char", "desc": "Market Status" },
+          { "order": 8, "offset": 49, "length": 9, "type": "int", "desc": "Open Price" },
+          { "order": 9, "offset": 58, "length": 9, "type": "int", "desc": "High Price" },
+          { "order": 10, "offset": 67, "length": 9, "type": "int", "desc": "Low Price" },
+          { "order": 11, "offset": 76, "length": 15, "type": "long", "desc": "Turnover" },
+          { "order": 12, "offset": 91, "length": 9, "type": "int", "desc": "Prev Close" }
+        ]
+      }
+    }
+  },
+  "/apik/prod1/spec/spec-002": {
+    "okay": true, "msg": "Success",
+    "data": {
+      "detail": {
+        "name": "spec-002", "path": "/data/spec/order", "timestamp": "2025-04-10 09:30:00",
+        "ref_identifies": 3, "frags": 8, "size": 128, "desc": "Order spec",
+        "related_identifies": [
+          { "name": "KR5701000055", "ref_count": 6, "url": "/identify/KR5701000055" },
+          { "name": "KR7005930003", "ref_count": 20, "url": "/identify/KR7005930003" },
+          { "name": "KR7000660001", "ref_count": 14, "url": "/identify/KR7000660001" }
+        ],
+        "spec_definition": [
+          { "order": 1, "offset": 0, "length": 2, "type": "string", "desc": "Data Type" },
+          { "order": 2, "offset": 2, "length": 12, "type": "string", "desc": "Issue Code" },
+          { "order": 3, "offset": 14, "length": 5, "type": "int", "desc": "Order No" },
+          { "order": 4, "offset": 19, "length": 9, "type": "int", "desc": "Order Price" },
+          { "order": 5, "offset": 28, "length": 12, "type": "long", "desc": "Order Qty" },
+          { "order": 6, "offset": 40, "length": 1, "type": "char", "desc": "Side" },
+          { "order": 7, "offset": 41, "length": 8, "type": "string", "desc": "Order Time" },
+          { "order": 8, "offset": 49, "length": 5, "type": "string", "desc": "Member ID" }
+        ]
+      }
     }
   },
   "/apik/prod1/identify/list": {
     "okay": true, "msg": "Success",
     "data": {
       "list": [
-        { "id": "ID001", "name": "Identifier A", "type": "primary", "timestamp": "2025-04-10 09:00:00", "desc": "Primary identifier" },
-        { "id": "ID002", "name": "Identifier B", "type": "secondary", "timestamp": "2025-04-10 09:30:00", "desc": "Secondary identifier" }
+        { "id": "ID001", "name": "KR5701000055", "path": "/data/identify/krx", "timestamp": "2025-04-10 09:00:00", "ref_specs": 3, "desc": "KRX Bond Identifier" },
+        { "id": "ID002", "name": "KR7005930003", "path": "/data/identify/stock", "timestamp": "2025-04-10 09:30:00", "ref_specs": 5, "desc": "Samsung Electronics" }
       ]
+    }
+  },
+  "/apik/prod1/identify/KR5701000055": {
+    "okay": true, "msg": "Success",
+    "data": {
+      "item": {
+        "name": "KR5701000055", "path": "/data/identify/krx", "timestamp": "2025-04-10 09:00:00",
+        "ref_specs": 3, "desc": "KRX Bond Identifier",
+        "keys": ["ISIN", "KRX_CODE", "SHORT_CODE"],
+        "related_specs": [
+          { "name": "spec-001", "ref_count": 12, "url": "/spec/spec-001" },
+          { "name": "spec-002", "ref_count": 6, "url": "/spec/spec-002" }
+        ],
+        "spec_def": "# KR5701000055 Identifier Definition\n\n[identifier]\nname = KR5701000055\ntype = bond\nmarket = KRX\n\n[keys]\nprimary = ISIN\nsecondary = KRX_CODE\nshort = SHORT_CODE\n\n[mapping]\nISIN = KR5701000055\nKRX_CODE = 570100\nSHORT_CODE = 57010\n\n[validation]\ncheck_digit = true\nformat = ^KR[0-9]{10}$\n\n[metadata]\nissuer = Korea Treasury\ncurrency = KRW\nmaturity = 2030-06-10"
+      }
+    }
+  },
+  "/apik/prod1/identify/KR7005930003": {
+    "okay": true, "msg": "Success",
+    "data": {
+      "item": {
+        "name": "KR7005930003", "path": "/data/identify/stock", "timestamp": "2025-04-10 09:30:00",
+        "ref_specs": 5, "desc": "Samsung Electronics",
+        "keys": ["ISIN", "KRX_CODE", "SYMBOL", "SHORT_CODE", "ENG_NAME"],
+        "related_specs": [
+          { "name": "spec-001", "ref_count": 45, "url": "/spec/spec-001" },
+          { "name": "spec-002", "ref_count": 20, "url": "/spec/spec-002" }
+        ],
+        "spec_def": "# KR7005930003 Identifier Definition\n\n[identifier]\nname = KR7005930003\ntype = equity\nmarket = KRX\n\n[keys]\nprimary = ISIN\nsecondary = KRX_CODE\nsymbol = SYMBOL\nshort = SHORT_CODE\neng = ENG_NAME\n\n[mapping]\nISIN = KR7005930003\nKRX_CODE = 005930\nSYMBOL = 005930\nSHORT_CODE = A005930\nENG_NAME = Samsung Electronics\n\n[validation]\ncheck_digit = true\nformat = ^KR[0-9]{10}$\n\n[metadata]\nsector = Electronics\ncurrency = KRW\nexchange = KOSPI\nboard_lot = 1"
+      }
     }
   },
   "/apik/prod1/function/list": {
