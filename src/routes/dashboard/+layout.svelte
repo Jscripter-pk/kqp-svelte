@@ -1,6 +1,6 @@
 <script lang="ts">
   import { page } from '$app/stores';
-  import { goto } from '$app/navigation';
+  import { goto, afterNavigate } from '$app/navigation';
   import { auth } from '$lib/stores/auth';
   import { theme } from '$lib/stores/theme';
   import { nodesStore } from '$lib/stores/nodes';
@@ -51,7 +51,16 @@
   ];
 
   let expandedNodeId: string | null = null;
-  $: if (activeNode && expandedNodeId !== activeNode) expandedNodeId = activeNode;
+
+  // Auto-expand only when navigating to a *different* node (not on intra-node navigation).
+  // This allows the user to manually collapse the active node's submenu.
+  afterNavigate(({ from, to }) => {
+    const toNode = to?.url.pathname.match(/\/dashboard\/nodes\/([^\/]+)/)?.[1] ?? null;
+    const fromNode = from?.url.pathname.match(/\/dashboard\/nodes\/([^\/]+)/)?.[1] ?? null;
+    if (toNode && toNode !== fromNode) {
+      expandedNodeId = toNode;
+    }
+  });
 </script>
 
 <div class="layout" class:dark={isDark} class:light={!isDark}>
@@ -191,7 +200,9 @@
 
     <!-- Page Content -->
     <main class="content">
-      <slot />
+      {#key $page.url.pathname}
+        <slot />
+      {/key}
     </main>
   </div>
 </div>
